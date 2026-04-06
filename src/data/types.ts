@@ -18,6 +18,7 @@ export interface Resource {
   actionType: ActionType;
   href?: string;
   modalKey?: string;
+  anchorId?: string;
   assetPath?: string;
   thumbnail?: string;
   keywords: string[];
