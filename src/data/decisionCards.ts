@@ -8,7 +8,7 @@ export const decisionCards: DecisionCard[] = [
   {
     id: 'decision-create',
     title: 'Create Something New',
-    description: "I need a new design, asset, or material that doesn't exist yet.",
+    description: 'Need a new design, asset, or material created from scratch.',
     icon: 'plus',
     actionType: 'anchor',
     anchorId: 'request-center',
@@ -16,8 +16,8 @@ export const decisionCards: DecisionCard[] = [
   },
   {
     id: 'decision-update',
-    title: 'Update Something Existing',
-    description: 'I need to revise, reprint, or refresh an existing asset or webpage.',
+    title: 'Update or Reprint',
+    description: 'Revise, reorder, or refresh an existing asset, material, or webpage.',
     icon: 'edit',
     actionType: 'anchor',
     anchorId: 'request-center',
@@ -25,8 +25,8 @@ export const decisionCards: DecisionCard[] = [
   },
   {
     id: 'decision-find',
-    title: 'Find an Asset',
-    description: "I'm looking for a logo, template, image, document, or brand resource.",
+    title: 'Find a Resource',
+    description: 'Looking for a logo, template, image, guideline, or brand file.',
     icon: 'search',
     actionType: 'anchor',
     anchorId: 'brand-resources',
@@ -34,8 +34,8 @@ export const decisionCards: DecisionCard[] = [
   },
   {
     id: 'decision-share',
-    title: 'Share Something',
-    description: 'I have a story, news, achievement, or content to share with the organization.',
+    title: 'Share a Story',
+    description: 'Submit a story, milestone, or achievement for Envision communications.',
     icon: 'share',
     actionType: 'email',
     href: 'mailto:marketing@envisionus.com?subject=Story%20Submission',
@@ -43,8 +43,8 @@ export const decisionCards: DecisionCard[] = [
   },
   {
     id: 'decision-plan',
-    title: 'Plan Something',
-    description: 'I need help planning a campaign, event, or multi-channel initiative.',
+    title: 'Plan a Campaign or Event',
+    description: 'Coordinate a campaign, event, or multi-channel marketing initiative.',
     icon: 'calendar',
     actionType: 'modal',
     modalKey: 'campaign-planning',
@@ -53,7 +53,7 @@ export const decisionCards: DecisionCard[] = [
   {
     id: 'decision-help',
     title: 'Not Sure Where to Start',
-    description: 'I need help figuring out what I need or where to go.',
+    description: 'Let us help you find the right resource, form, or next step.',
     icon: 'help',
     actionType: 'anchor',
     anchorId: 'hero',
