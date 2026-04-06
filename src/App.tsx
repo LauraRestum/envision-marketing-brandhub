@@ -49,8 +49,8 @@ export default function App() {
         {/* Templates */}
         <TemplateGrid onAction={handleAction} />
 
-        {/* Request Center — gated decision flow */}
-        <RequestFlow onOpenModal={setActiveModal} />
+        {/* Request Center — gated decision flow + smart intake */}
+        <RequestFlow />
       </main>
 
       {/* Story Submission — dedicated section, not a modal */}
