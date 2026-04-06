@@ -22,6 +22,7 @@ export default function App() {
 
       {/* Hero with Universal Search */}
       <section className="hero">
+        <div className="hero__glow" />
         <div className="hero__inner">
           <p className="hero__welcome">Envision Brand & Marketing</p>
           <h1 className="hero__title">How can we help?</h1>
