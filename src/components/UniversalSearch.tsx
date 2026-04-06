@@ -1,8 +1,10 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { Icon } from './Icons';
+import { ImageryResultCard } from './ImageryResultCard';
 import { resources } from '@/data/resources';
 import { templates } from '@/data/templates';
 import { requestForms } from '@/data/requestForms';
+import { resolveImageryRoute, type ImageryRouteResult } from '@/lib/resolveImageryRoute';
 import type { ActionType } from '@/data/types';
 
 interface SearchItem {
@@ -18,7 +20,7 @@ interface SearchItem {
   icon?: string;
 }
 
-const SEARCH_HINTS = ['logo', 'presentation', 'reprint', 'brand guidelines', 'business card'];
+const SEARCH_HINTS = ['logo', 'presentation', 'reprint', 'brand guidelines', 'business card', 'classroom photos', 'gala', 'building'];
 
 function buildIndex(): SearchItem[] {
   const items: SearchItem[] = [];
@@ -41,10 +43,12 @@ interface Props {
 export function UniversalSearch({ onAction }: Props) {
   const [query, setQuery] = useState('');
   const [focused, setFocused] = useState(false);
+  const [imageryResult, setImageryResult] = useState<ImageryRouteResult | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
   const index = useMemo(buildIndex, []);
 
+  // Standard resource/template/form results
   const results = useMemo(() => {
     if (!query.trim()) return [];
     const q = query.toLowerCase().trim();
@@ -65,6 +69,12 @@ export function UniversalSearch({ onAction }: Props) {
       .map((r) => r.item);
   }, [query, index]);
 
+  // Imagery taxonomy match — runs alongside standard search
+  const currentImageryMatch = useMemo(() => {
+    if (!query.trim()) return null;
+    return resolveImageryRoute(query);
+  }, [query]);
+
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
@@ -77,6 +87,20 @@ export function UniversalSearch({ onAction }: Props) {
 
   const showResults = focused && query.trim().length > 0;
 
+  function handleSelectResult(item: SearchItem) {
+    onAction(item);
+    setQuery('');
+    setFocused(false);
+    setImageryResult(null);
+  }
+
+  function handleImageryConfirm() {
+    if (currentImageryMatch) {
+      setImageryResult(currentImageryMatch);
+      setFocused(false);
+    }
+  }
+
   return (
     <div className="search" ref={wrapRef}>
       <div className="search__input-wrap">
@@ -85,13 +109,13 @@ export function UniversalSearch({ onAction }: Props) {
           ref={inputRef}
           className="search__input"
           type="text"
-          placeholder="Search for logos, templates, forms, or anything you need..."
+          placeholder="Search for logos, templates, forms, photos, or anything you need..."
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) => { setQuery(e.target.value); setImageryResult(null); }}
           onFocus={() => setFocused(true)}
         />
         {query && (
-          <button className="search__clear" onClick={() => { setQuery(''); inputRef.current?.focus(); }}>
+          <button className="search__clear" onClick={() => { setQuery(''); setImageryResult(null); inputRef.current?.focus(); }}>
             <Icon name="x" />
           </button>
         )}
@@ -99,18 +123,39 @@ export function UniversalSearch({ onAction }: Props) {
 
       {showResults && (
         <div className="search__results">
-          {results.length > 0 ? (
+          {/* Imagery match — shown as a promoted result at top */}
+          {currentImageryMatch && (
             <>
-              <div className="search__results-header">{results.length} result{results.length !== 1 ? 's' : ''}</div>
+              <div className="search__results-header">Imagery Library</div>
+              <div
+                className="search__result-item search__result-item--imagery"
+                onClick={handleImageryConfirm}
+              >
+                <div className="search__result-icon search__result-icon--imagery">
+                  <Icon name="image" />
+                </div>
+                <div className="search__result-text">
+                  <div className="search__result-title">{currentImageryMatch.subcategory}</div>
+                  <div className="search__result-desc">
+                    {currentImageryMatch.destinationTitle}
+                  </div>
+                </div>
+                <span className="search__result-badge search__result-badge--imagery">Photo</span>
+              </div>
+            </>
+          )}
+
+          {/* Standard results */}
+          {results.length > 0 && (
+            <>
+              <div className="search__results-header">
+                {results.length} result{results.length !== 1 ? 's' : ''}
+              </div>
               {results.map((item) => (
                 <div
                   key={item.id}
                   className="search__result-item"
-                  onClick={() => {
-                    onAction(item);
-                    setQuery('');
-                    setFocused(false);
-                  }}
+                  onClick={() => handleSelectResult(item)}
                 >
                   <div className="search__result-icon">
                     <Icon name={item.icon || 'document'} />
@@ -123,10 +168,12 @@ export function UniversalSearch({ onAction }: Props) {
                 </div>
               ))}
             </>
-          ) : (
+          )}
+
+          {!currentImageryMatch && results.length === 0 && (
             <div className="search__empty">
               No results for "{query}". Try a different term or <button
-                style={{ color: 'var(--teal-500)', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 'inherit', padding: 0 }}
+                style={{ color: 'var(--brand-cyan)', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 'inherit', padding: 0 }}
                 onClick={() => {
                   onAction({ actionType: 'anchor', anchorId: 'request-center' });
                   setQuery('');
@@ -138,9 +185,17 @@ export function UniversalSearch({ onAction }: Props) {
         </div>
       )}
 
+      {/* Imagery result card — persists outside the dropdown */}
+      {imageryResult && (
+        <ImageryResultCard
+          result={imageryResult}
+          onDismiss={() => setImageryResult(null)}
+        />
+      )}
+
       <div className="search__hints">
         {SEARCH_HINTS.map((hint) => (
-          <button key={hint} className="search__hint" onClick={() => { setQuery(hint); setFocused(true); inputRef.current?.focus(); }}>
+          <button key={hint} className="search__hint" onClick={() => { setQuery(hint); setImageryResult(null); setFocused(true); inputRef.current?.focus(); }}>
             {hint}
           </button>
         ))}
