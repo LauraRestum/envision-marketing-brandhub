@@ -24,8 +24,6 @@ export interface IntakeQuestion {
   hints?: string[];
   /** If true, this is a select-one question instead of free text. */
   choices?: string[];
-  /** Minimum character threshold for "okay" tier. */
-  minLength?: number;
   /** Keywords that signal specificity (boost to "good"). */
   specificitySignals?: string[];
   /** Keywords that signal vagueness (drop to "vague"). */
@@ -59,51 +57,50 @@ export function assessAnswer(question: IntakeQuestion, answer: string): QualityA
       : { tier: 'vague', feedback: 'Select an option.' };
   }
 
-  // Empty or near-empty
-  if (wordCount < 3) {
+  // Completely empty
+  if (!trimmed) {
     return {
       tier: 'vague',
-      feedback: 'Too brief. Add enough detail so the team can start without a follow-up.',
+      feedback: 'This field needs an answer so the team can get started.',
     };
   }
 
-  // Check for vague signals
+  // Check for vague signals — only flag if the answer is JUST vague filler
   const vagueHits = (question.vagueSignals ?? GLOBAL_VAGUE_SIGNALS).filter((s) =>
     lower.includes(s)
   );
-  if (vagueHits.length > 0 && wordCount < 8) {
+  if (vagueHits.length > 0 && wordCount <= 3) {
     return {
       tier: 'vague',
       feedback: `"${vagueHits[0]}" is too generic. Be specific — who, what, where, or when?`,
     };
   }
 
-  // Check length threshold
-  const minLen = question.minLength ?? 20;
-  if (trimmed.length < minLen) {
-    return {
-      tier: 'okay',
-      feedback: 'This works, but a bit more detail would help the team move faster.',
-    };
-  }
-
-  // Check for specificity signals
+  // Check for specificity signals — this is the primary quality driver
   const specHits = (question.specificitySignals ?? []).filter((s) =>
     lower.includes(s)
   );
-  if (specHits.length > 0 || wordCount >= 15) {
+
+  // If the answer contains a specificity signal, it is good regardless of length
+  if (specHits.length > 0) {
     return { tier: 'good', feedback: 'Clear and specific.' };
   }
 
-  // Default: okay
-  if (wordCount >= 8) {
+  // A single word that is not a vague signal — usable but could be better
+  if (wordCount === 1) {
+    return {
+      tier: 'okay',
+      feedback: 'A bit more context would help the team move faster.',
+    };
+  }
+
+  // 2+ words without vague signals = good enough to act on
+  // The user gave a real answer; trust it
+  if (wordCount >= 2) {
     return { tier: 'good', feedback: 'Looks good.' };
   }
 
-  return {
-    tier: 'okay',
-    feedback: 'Usable, but more context helps. Consider adding a timeline, audience, or example.',
-  };
+  return { tier: 'okay', feedback: 'A bit more context would help the team move faster.' };
 }
 
 const GLOBAL_VAGUE_SIGNALS = [
@@ -229,8 +226,7 @@ export const intakeDefinitions: Record<string, IntakeDefinition> = {
         label: 'What do you need created?',
         placeholder: 'e.g., A tri-fold brochure for the Q3 open house at EVRC, 8.5x11 folded',
         hints: ['Name the specific deliverable', 'Include format or size if you know it'],
-        minLength: 15,
-        specificitySignals: ['brochure', 'flyer', 'poster', 'infographic', 'presentation', 'banner', 'postcard', 'rack card', 'one-pager', 'social post', 'email', 'newsletter', 'slide'],
+        specificitySignals: ['brochure', 'flyer', 'flyers', 'poster', 'posters', 'infographic', 'presentation', 'banner', 'postcard', 'rack card', 'one-pager', 'social post', 'email', 'newsletter', 'slide'],
         vagueSignals: ['something', 'stuff', 'thing', 'not sure', 'whatever', 'just need', 'make something'],
         fieldKey: 'deliverable',
       },
@@ -239,7 +235,6 @@ export const intakeDefinitions: Record<string, IntakeDefinition> = {
         label: 'Who is this for?',
         placeholder: 'e.g., Prospective families visiting ECDC during enrollment season',
         hints: ['Internal team? External audience?', 'Be specific about who will see this'],
-        minLength: 10,
         specificitySignals: ['families', 'staff', 'patients', 'donors', 'partners', 'leadership', 'employees', 'community', 'students', 'visitors'],
         fieldKey: 'audience',
       },
@@ -248,7 +243,6 @@ export const intakeDefinitions: Record<string, IntakeDefinition> = {
         label: 'What is this for?',
         placeholder: 'e.g., Handing out at the annual open house on June 15. Need to highlight new programs and enrollment info.',
         hints: ['Event, campaign, or ongoing use?', 'What action should the audience take?'],
-        minLength: 20,
         specificitySignals: ['event', 'campaign', 'launch', 'open house', 'conference', 'enrollment', 'recruitment', 'awareness', 'fundraising'],
         vagueSignals: ['general use', 'just because', 'idk'],
         fieldKey: 'purpose',
@@ -258,7 +252,7 @@ export const intakeDefinitions: Record<string, IntakeDefinition> = {
         label: 'When do you need it?',
         placeholder: 'e.g., Final version by May 30. Draft review by May 20.',
         hints: ['Include the hard deadline', 'Is there a review cycle?'],
-        specificitySignals: ['by', 'before', 'deadline', 'date', 'week of', 'no later than'],
+        specificitySignals: ['by', 'before', 'deadline', 'date', 'week of', 'no later than', 'end of', 'beginning of', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
         vagueSignals: ['asap', 'whenever', 'soon', 'rush', 'urgent'],
         fieldKey: 'timeline',
       },
@@ -292,7 +286,6 @@ export const intakeDefinitions: Record<string, IntakeDefinition> = {
         label: 'What needs to change?',
         placeholder: 'e.g., Replace the team photo with the updated one from January. Update Dr. Smith\'s title to "Medical Director."',
         hints: ['Be specific: what text, image, or section?', 'Old value → new value helps'],
-        minLength: 15,
         vagueSignals: ['update it', 'fix it', 'change stuff', 'make it better'],
         fieldKey: 'change_description',
       },
@@ -300,7 +293,7 @@ export const intakeDefinitions: Record<string, IntakeDefinition> = {
         id: 'timeline',
         label: 'When does this need to go live?',
         placeholder: 'e.g., Before the board meeting on April 20',
-        specificitySignals: ['by', 'before', 'date', 'week of', 'no later'],
+        specificitySignals: ['by', 'before', 'date', 'week of', 'no later', 'end of', 'beginning of', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
         vagueSignals: ['asap', 'whenever', 'soon'],
         fieldKey: 'timeline',
       },
@@ -319,8 +312,7 @@ export const intakeDefinitions: Record<string, IntakeDefinition> = {
         label: 'What are you planning?',
         placeholder: 'e.g., Annual Envision Golf Classic fundraiser — 200+ attendees, May 15 at Tallgrass Country Club',
         hints: ['Name the event or campaign', 'Include date, location, and expected size'],
-        minLength: 20,
-        specificitySignals: ['event', 'campaign', 'launch', 'conference', 'gala', 'golf', 'fundraiser', 'open house', 'webinar'],
+        specificitySignals: ['event', 'campaign', 'launch', 'conference', 'gala', 'golf', 'fundraiser', 'open house', 'webinar', 'summit', 'luncheon', 'banquet', 'workshop', 'seminar', 'fair', 'expo'],
         fieldKey: 'event_description',
       },
       {
@@ -328,7 +320,7 @@ export const intakeDefinitions: Record<string, IntakeDefinition> = {
         label: 'What marketing materials do you need?',
         placeholder: 'e.g., Save-the-date email, event program, table signage, social media posts (3), post-event recap',
         hints: ['List every deliverable you expect to need', 'Include quantities if known'],
-        minLength: 15,
+        specificitySignals: ['flyer', 'flyers', 'poster', 'posters', 'brochure', 'brochures', 'email', 'social', 'program', 'signage', 'banner', 'banners', 'postcard', 'save-the-date', 'recap', 'newsletter', 'slide', 'slides', 'invitation'],
         fieldKey: 'deliverables',
       },
       {
@@ -336,7 +328,7 @@ export const intakeDefinitions: Record<string, IntakeDefinition> = {
         label: 'Key dates and deadlines?',
         placeholder: 'e.g., Save-the-date by March 1. Program finalized by April 15. Social posts start April 20.',
         hints: ['List milestones in order', 'Include the hard event date'],
-        specificitySignals: ['by', 'before', 'date', 'week of', 'start', 'launch', 'send'],
+        specificitySignals: ['by', 'before', 'date', 'week of', 'start', 'launch', 'send', 'end of', 'beginning of', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'],
         vagueSignals: ['asap', 'soon', 'tbd'],
         fieldKey: 'timeline',
       },
@@ -362,7 +354,6 @@ export const intakeDefinitions: Record<string, IntakeDefinition> = {
         label: 'What do you need?',
         placeholder: 'e.g., High-res photo of the Wichita building exterior, or the ECDC classroom during a group activity',
         hints: ['Be as specific as possible', 'Include subject, location, or context'],
-        minLength: 15,
         vagueSignals: ['something', 'a photo', 'an image', 'a file', 'stuff'],
         fieldKey: 'asset_description',
       },
@@ -378,7 +369,7 @@ export const intakeDefinitions: Record<string, IntakeDefinition> = {
         id: 'timeline',
         label: 'When do you need it?',
         placeholder: 'e.g., By next Friday for the board deck',
-        specificitySignals: ['by', 'before', 'date', 'friday', 'monday', 'week'],
+        specificitySignals: ['by', 'before', 'date', 'friday', 'monday', 'tuesday', 'wednesday', 'thursday', 'week', 'end of', 'beginning of', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'],
         vagueSignals: ['asap', 'whenever', 'soon'],
         fieldKey: 'timeline',
       },

@@ -4,7 +4,6 @@ import {
   intakeDefinitions,
   assessAnswer,
   assessScope,
-  generateBrief,
   type IntakeDefinition,
   type IntakeQuestion,
   type QualityTier,
@@ -84,13 +83,22 @@ function IntakeFlow({
   }
 
   function handleSubmit() {
-    const brief = generateBrief(definition, answers, flowContext);
-    const subject = encodeURIComponent(definition.emailSubject);
-    const body = encodeURIComponent(brief);
-    window.open(
-      `mailto:marketing@envisionus.com?subject=${subject}&body=${body}`,
-      '_blank'
-    );
+    // Build ClickUp form URL with pre-filled values from intake answers
+    const params = new URLSearchParams();
+    for (const q of definition.questions) {
+      const answer = answers[q.id]?.trim();
+      if (answer) {
+        params.set(q.fieldKey, answer);
+      }
+    }
+    // Add flow context as additional pre-fill
+    if (flowContext.intent) {
+      params.set('request_type', flowContext.intent);
+    }
+
+    const separator = definition.embedUrl.includes('?') ? '&' : '?';
+    const prefillUrl = `${definition.embedUrl}${separator}${params.toString()}`;
+    window.open(prefillUrl, '_blank', 'noopener');
     setSubmitted(true);
   }
 
@@ -108,9 +116,9 @@ function IntakeFlow({
           <div className="intake__done-icon">
             <Icon name="sparkle" />
           </div>
-          <h3 className="intake__done-title">Request submitted</h3>
+          <h3 className="intake__done-title">Almost done!</h3>
           <p className="intake__done-text">
-            Your brief has been sent to the marketing team. They'll review and follow up within 1–2 business days.
+            Your answers have been pre-filled into the ClickUp form. Upload any files and submit the form to complete your request. The team will review and follow up within 1–2 business days.
           </p>
           <button className="intake__done-btn" onClick={onClose}>
             Back to Hub
