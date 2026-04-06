@@ -1943,3 +1943,294 @@ img {
     padding: var(--space-10) 0;
   }
 }
+
+/* ============================================================
+   CONTACT PAGE
+   ============================================================ */
+
+/* Header button reset so it matches the anchor links */
+.header__link--btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  padding: 0;
+}
+
+/* Back bar */
+.contact-page__back-bar {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-6) 0;
+}
+
+.contact-page__back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: none;
+  border: none;
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--brand-navy);
+  cursor: pointer;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast);
+}
+
+.contact-page__back-btn svg {
+  transform: rotate(180deg);
+}
+
+.contact-page__back-btn:hover {
+  background: var(--gray-100);
+}
+
+/* Hero */
+.contact-page__hero {
+  position: relative;
+  background: linear-gradient(135deg, var(--brand-navy-dark), var(--brand-navy-mid));
+  padding: var(--space-16) var(--space-6);
+  text-align: center;
+  overflow: hidden;
+}
+
+.contact-page__hero-glow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 30% 40%, rgba(27, 174, 225, 0.15), transparent),
+    radial-gradient(ellipse 50% 60% at 70% 60%, rgba(92, 177, 53, 0.10), transparent);
+  pointer-events: none;
+}
+
+.contact-page__hero-inner {
+  position: relative;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.contact-page__hero-title {
+  font-family: var(--font-heading);
+  font-size: var(--text-4xl);
+  font-weight: 800;
+  color: var(--white);
+  margin: 0 0 var(--space-3);
+  letter-spacing: -0.02em;
+}
+
+.contact-page__hero-subtitle {
+  font-size: var(--text-lg);
+  color: rgba(255, 255, 255, 0.75);
+  margin: 0;
+}
+
+/* Team grid */
+.contact-page__team {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--space-12) var(--space-6);
+}
+
+.contact-page__team-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+}
+
+.contact-page__card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-8) var(--space-6);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-fast), transform var(--transition-fast);
+}
+
+.contact-page__card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.contact-page__avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: var(--text-xl);
+  margin: 0 auto var(--space-4);
+  letter-spacing: 0.02em;
+}
+
+.contact-page__name {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-1);
+}
+
+.contact-page__title {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: var(--leading-normal);
+}
+
+/* Form section */
+.contact-page__form-section {
+  background: var(--surface-secondary);
+  padding: var(--space-12) var(--space-6) var(--space-16);
+}
+
+.contact-page__form-wrapper {
+  max-width: 640px;
+  margin: 0 auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-10);
+  box-shadow: var(--shadow-sm);
+}
+
+.contact-page__form-heading {
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-2);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.contact-page__form-desc {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-8);
+  line-height: var(--leading-relaxed);
+}
+
+.contact-page__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.contact-page__field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-5);
+}
+
+.contact-page__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.contact-page__label {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.contact-page__input,
+.contact-page__textarea {
+  font-family: var(--font);
+  font-size: var(--text-base);
+  color: var(--text-primary);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.contact-page__input:focus,
+.contact-page__textarea:focus {
+  outline: none;
+  border-color: var(--brand-cyan);
+  box-shadow: 0 0 0 3px rgba(27, 174, 225, 0.15);
+}
+
+.contact-page__input::placeholder,
+.contact-page__textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
+.contact-page__textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.contact-page__submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-family: var(--font);
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--white);
+  background: var(--brand-green);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-6);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  align-self: flex-start;
+}
+
+.contact-page__submit:hover {
+  background: var(--brand-green-dark);
+}
+
+/* Success message */
+.contact-page__success {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  background: var(--brand-green-bg);
+  border: 1px solid var(--brand-green);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-5);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+}
+
+.contact-page__success a {
+  color: var(--brand-cyan);
+  font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .contact-page__team-grid {
+    grid-template-columns: 1fr;
+    max-width: 360px;
+    margin: 0 auto;
+  }
+
+  .contact-page__field-row {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-page__hero-title {
+    font-size: var(--text-3xl);
+  }
+
+  .contact-page__form-wrapper {
+    padding: var(--space-6);
+  }
+}

@@ -1,4 +1,4 @@
-export function Header() {
+export function Header({ onContactClick }: { onContactClick?: () => void }) {
   return (
     <header className="header">
       <div className="header__inner">
@@ -11,12 +11,13 @@ export function Header() {
           <a href="#brand-resources" className="header__link">Resources</a>
           <a href="#templates" className="header__link">Templates</a>
           <a href="#request-center" className="header__link">Requests</a>
-          <a
-            href="mailto:marketing@envisionus.com"
-            className="header__link"
+          <button
+            type="button"
+            className="header__link header__link--btn"
+            onClick={onContactClick}
           >
             Contact Us
-          </a>
+          </button>
         </nav>
       </div>
     </header>
