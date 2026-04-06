@@ -10,7 +10,7 @@ interface TeamMember {
 
 const team: TeamMember[] = [
   {
-    name: 'Madison Newhouse',
+    name: 'Madison Neauhaus',
     title: 'Senior Director of Marketing Communications',
     initials: 'MN',
     color: 'var(--brand-purple)',
