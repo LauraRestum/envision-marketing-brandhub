@@ -7,7 +7,7 @@ import { QuickActions } from '@/components/QuickActions';
 import { PolicyBanner } from '@/components/PolicyBanner';
 import { ResourceGrid } from '@/components/ResourceGrid';
 import { TemplateGrid } from '@/components/TemplateGrid';
-import { RequestCenter } from '@/components/RequestCenter';
+import { RequestFlow } from '@/components/RequestFlow';
 import { StorySubmission } from '@/components/StorySubmission';
 import { Footer } from '@/components/Footer';
 import { Modal } from '@/components/Modal';
@@ -49,8 +49,8 @@ export default function App() {
         {/* Templates */}
         <TemplateGrid onAction={handleAction} />
 
-        {/* Request Center */}
-        <RequestCenter onAction={handleAction} />
+        {/* Request Center — gated decision flow */}
+        <RequestFlow onOpenModal={setActiveModal} />
       </main>
 
       {/* Story Submission — dedicated section, not a modal */}
