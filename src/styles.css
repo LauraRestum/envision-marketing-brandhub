@@ -290,10 +290,17 @@ img {
   background: linear-gradient(170deg, var(--navy-900) 0%, var(--navy-700) 50%, var(--navy-600) 100%);
   padding: var(--space-16) 0 var(--space-20);
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 
-.hero::before {
+.hero__glow {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hero__glow::before {
   content: '';
   position: absolute;
   top: -50%;
@@ -301,10 +308,9 @@ img {
   width: 600px;
   height: 600px;
   background: radial-gradient(circle, rgba(27, 174, 225, 0.14) 0%, transparent 70%);
-  pointer-events: none;
 }
 
-.hero::after {
+.hero__glow::after {
   content: '';
   position: absolute;
   bottom: -30%;
@@ -312,7 +318,6 @@ img {
   width: 400px;
   height: 400px;
   background: radial-gradient(circle, rgba(92, 177, 53, 0.10) 0%, transparent 70%);
-  pointer-events: none;
 }
 
 .hero__inner {
@@ -354,10 +359,12 @@ img {
 .search {
   max-width: 640px;
   position: relative;
+  z-index: 50;
 }
 
 .search__input-wrap {
   position: relative;
+  z-index: 2;
 }
 
 .search__icon {
@@ -426,7 +433,7 @@ img {
   border: 1px solid var(--border);
   max-height: 420px;
   overflow-y: auto;
-  z-index: 50;
+  z-index: 60;
 }
 
 .search__results-header {
