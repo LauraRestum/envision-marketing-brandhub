@@ -11,14 +11,26 @@ import { RequestFlow } from '@/components/RequestFlow';
 import { StorySubmission } from '@/components/StorySubmission';
 import { Footer } from '@/components/Footer';
 import { Modal } from '@/components/Modal';
+import { ContactPage } from '@/components/ContactPage';
 
 export default function App() {
   const [activeModal, setActiveModal] = useState<string | null>(null);
+  const [showContact, setShowContact] = useState(false);
   const handleAction = useAction(setActiveModal);
+
+  if (showContact) {
+    return (
+      <div className="app">
+        <Header onContactClick={() => setShowContact(true)} />
+        <ContactPage onBack={() => { setShowContact(false); window.scrollTo(0, 0); }} />
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="app">
-      <Header />
+      <Header onContactClick={() => setShowContact(true)} />
 
       {/* Hero with Universal Search */}
       <section className="hero">
