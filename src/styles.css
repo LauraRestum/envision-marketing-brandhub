@@ -1428,6 +1428,21 @@ img {
   cursor: not-allowed;
 }
 
+.intake__skip {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--surface-secondary);
+  padding: var(--space-2) var(--space-5);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease);
+}
+
+.intake__skip:hover {
+  color: var(--text-primary);
+  background: var(--surface-tertiary);
+}
+
 .intake__enter-hint {
   font-size: var(--text-xs);
   color: var(--text-tertiary);
