@@ -150,6 +150,16 @@ button {
   background: none;
 }
 
+/* Global focus-visible ring for accessibility */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--brand-cyan);
+  outline-offset: 2px;
+}
+
 img {
   max-width: 100%;
   display: block;
@@ -535,8 +545,9 @@ img {
 .search__hint {
   font-size: var(--text-xs);
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.45);
-  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.65);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-full);
   transition: all var(--duration-fast) var(--ease);
@@ -721,6 +732,11 @@ img {
   transform: translateY(-1px);
 }
 
+.decision-card:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
 .decision-card__icon {
   width: 42px;
   height: 42px;
@@ -809,6 +825,11 @@ img {
   box-shadow: var(--shadow-xs);
 }
 
+.quick-action:active {
+  transform: scale(0.97);
+  box-shadow: none;
+}
+
 .quick-action__icon {
   display: flex;
   align-items: center;
@@ -889,6 +910,11 @@ img {
   border-color: var(--gray-300);
   box-shadow: var(--shadow-md);
   transform: translateY(-2px);
+}
+
+.resource-card:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
 }
 
 .resource-card__top {
@@ -1139,6 +1165,11 @@ img {
   border-color: var(--brand-navy);
   box-shadow: var(--shadow-sm);
   transform: translateX(2px);
+}
+
+.flow__option:active {
+  transform: translateX(2px) scale(0.98);
+  box-shadow: var(--shadow-xs);
 }
 
 .flow__option--intent {
@@ -1475,6 +1506,12 @@ img {
   transform: translateX(2px);
 }
 
+.intake__choice:active {
+  background: var(--brand-navy);
+  color: var(--white);
+  transform: translateX(2px) scale(0.98);
+}
+
 /* Scope assessment */
 .intake__scope {
   padding: var(--space-4) var(--space-5);
@@ -1755,6 +1792,13 @@ img {
 .intake__prefill-copy--done {
   background: var(--brand-green);
   color: var(--white);
+  animation: copyPulse 200ms var(--ease);
+}
+
+@keyframes copyPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
 }
 
 .intake__prefill-value {
@@ -1878,6 +1922,14 @@ img {
   display: flex;
   align-items: flex-start;
   gap: var(--space-4);
+  transition: all var(--duration-normal) var(--ease);
+  cursor: default;
+}
+
+.story__prompt:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateX(4px);
 }
 
 .story__prompt-icon {

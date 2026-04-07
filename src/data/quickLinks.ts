@@ -16,8 +16,8 @@ export const quickLinks: QuickLink[] = [
     id: 'quick-brand-book',
     title: 'Brand Book',
     icon: 'book',
-    actionType: 'internal',
-    href: '/assets/documents/brand-guidelines.pdf',
+    actionType: 'anchor',
+    anchorId: 'brand-resources',
   },
   {
     id: 'quick-templates',
