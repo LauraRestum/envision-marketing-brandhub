@@ -13,11 +13,13 @@ import { Footer } from '@/components/Footer';
 import { Modal } from '@/components/Modal';
 import { ContactPage } from '@/components/ContactPage';
 import { HelpWizard } from '@/components/HelpWizard';
+import { MessagingAssistant } from '@/components/MessagingAssistant';
 
 export default function App() {
   const [activeModal, setActiveModal] = useState<string | null>(null);
   const [showContact, setShowContact] = useState(false);
   const [showWizard, setShowWizard] = useState(false);
+  const [showMessaging, setShowMessaging] = useState(false);
   const handleAction = useAction(setActiveModal);
 
   function handleWizardNavigate(anchorId: string) {
@@ -62,7 +64,7 @@ export default function App() {
 
       <main className="main">
         {/* Brand Resources */}
-        <ResourceGrid onAction={handleAction} />
+        <ResourceGrid onAction={handleAction} onMessagingAssistant={() => setShowMessaging(true)} />
 
         {/* Templates */}
         <TemplateGrid onAction={handleAction} />
@@ -85,6 +87,11 @@ export default function App() {
           onClose={() => setShowWizard(false)}
           onNavigate={handleWizardNavigate}
         />
+      )}
+
+      {/* Messaging Assistant overlay */}
+      {showMessaging && (
+        <MessagingAssistant onClose={() => setShowMessaging(false)} />
       )}
     </div>
   );
