@@ -9,6 +9,10 @@ interface Platform {
   url: string;
   audience: string;
   usage: string;
+  /** Optional iframe embed URL for live feed preview */
+  embedUrl?: string;
+  /** Hex color for the platform accent */
+  color: string;
 }
 
 const platforms: Platform[] = [
@@ -16,41 +20,39 @@ const platforms: Platform[] = [
     id: 'facebook',
     name: 'Facebook',
     icon: 'facebook',
-    url: 'https://www.facebook.com/envisionus',
+    url: 'https://www.facebook.com/share/1DzeJL9y4S/?mibextid=wwXIfr',
     audience: 'Community members, families, prospective referrals',
     usage: 'Stories, events, community highlights, culture posts',
+    embedUrl:
+      'https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1DzeJL9y4S%2F&tabs=timeline&width=340&height=500&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=false',
+    color: '#1877F2',
   },
   {
     id: 'linkedin',
     name: 'LinkedIn',
     icon: 'linkedin',
-    url: 'https://www.linkedin.com/company/envisionus',
+    url: 'https://www.linkedin.com/company/envision-inc/',
     audience: 'Industry professionals, potential partners, job seekers',
     usage: 'Thought leadership, company news, career opportunities, industry updates',
+    color: '#0A66C2',
   },
   {
     id: 'instagram',
     name: 'Instagram',
     icon: 'instagram',
-    url: 'https://www.instagram.com/envisionus',
+    url: 'https://www.instagram.com/discoverenvision?igsh=MWdtMG1qOXBrcGRuYg%3D%3D&utm_source=qr',
     audience: 'Younger audience, visual-first followers, potential employees',
     usage: 'Behind-the-scenes, culture, events, short-form video, stories',
+    color: '#E4405F',
   },
   {
-    id: 'youtube',
-    name: 'YouTube',
-    icon: 'youtube',
-    url: 'https://www.youtube.com/@envisionus',
-    audience: 'Broad audience seeking in-depth content',
-    usage: 'Testimonials, event recaps, educational content, long-form video',
-  },
-  {
-    id: 'twitter',
-    name: 'X (Twitter)',
-    icon: 'twitter',
-    url: 'https://x.com/envisionus',
-    audience: 'Industry peers, media, quick-update followers',
-    usage: 'News, announcements, event live-posts, quick engagement',
+    id: 'tiktok',
+    name: 'TikTok',
+    icon: 'tiktok',
+    url: 'https://www.tiktok.com/@discoverenvision?_r=1&_t=ZP-95KICtXRLtW',
+    audience: 'Gen Z and younger millennials, trend-driven audience',
+    usage: 'Short-form video, trends, behind-the-scenes, culture spotlights',
+    color: '#000000',
   },
 ];
 
@@ -111,32 +113,72 @@ export function SocialMediaHub() {
           </p>
         </div>
 
-        {/* ── Platform cards ── */}
-        <div className="social-platforms">
+        {/* ── Platform feed previews ── */}
+        <div className="social-feeds">
           {platforms.map((p) => (
-            <a
-              key={p.id}
-              className="social-platform-card"
-              href={p.url}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <div className="social-platform-card__icon">
-                <Icon name={p.icon} />
+            <div key={p.id} className="social-feed-card">
+              <div className="social-feed-card__header" style={{ borderTopColor: p.color }}>
+                <div className="social-feed-card__icon" style={{ background: p.color }}>
+                  <Icon name={p.icon} />
+                </div>
+                <div className="social-feed-card__info">
+                  <h3 className="social-feed-card__name">{p.name}</h3>
+                  <p className="social-feed-card__audience">{p.audience}</p>
+                </div>
               </div>
-              <div className="social-platform-card__body">
-                <h3 className="social-platform-card__name">{p.name}</h3>
-                <p className="social-platform-card__audience">
-                  <strong>Audience:</strong> {p.audience}
-                </p>
-                <p className="social-platform-card__usage">
-                  <strong>Best for:</strong> {p.usage}
-                </p>
+
+              <div className="social-feed-card__preview">
+                {p.embedUrl ? (
+                  <iframe
+                    src={p.embedUrl}
+                    width="100%"
+                    height="500"
+                    style={{ border: 'none', overflow: 'hidden' }}
+                    scrolling="no"
+                    frameBorder="0"
+                    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                    title={`${p.name} feed`}
+                  />
+                ) : (
+                  <div className="social-feed-card__placeholder">
+                    <div
+                      className="social-feed-card__placeholder-icon"
+                      style={{ background: p.color }}
+                    >
+                      <Icon name={p.icon} size={32} />
+                    </div>
+                    <p className="social-feed-card__placeholder-label">
+                      <strong>Best for:</strong> {p.usage}
+                    </p>
+                    <a
+                      className="social-feed-card__visit"
+                      href={p.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ background: p.color }}
+                    >
+                      Visit {p.name} <Icon name="arrow-right" />
+                    </a>
+                  </div>
+                )}
               </div>
-              <div className="social-platform-card__arrow">
-                <Icon name="arrow-right" />
-              </div>
-            </a>
+
+              {p.embedUrl && (
+                <div className="social-feed-card__footer">
+                  <span className="social-feed-card__usage">
+                    <strong>Best for:</strong> {p.usage}
+                  </span>
+                  <a
+                    className="social-feed-card__link"
+                    href={p.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Visit Page <Icon name="arrow-right" />
+                  </a>
+                </div>
+              )}
+            </div>
           ))}
         </div>
 
