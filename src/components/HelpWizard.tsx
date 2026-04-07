@@ -74,7 +74,7 @@ const nodes: Record<string, WizardNode> = {
     options: [
       { label: 'Reprinting or reordering an existing piece', anchorId: 'request-center', recommendation: "Go to the Request Center and choose 'Request something custom' — mention it's a reprint in your brief." },
       { label: 'Creating a new print piece from scratch', anchorId: 'request-center', recommendation: "Head to the Request Center and select 'Create something' to kick off a new print design request." },
-      { label: "I'm not sure — I need guidance", recommendation: "No problem! Email the marketing team at marketing@envisionus.com and we'll help you figure out the best approach." },
+      { label: "I'm not sure — I need guidance", anchorId: 'request-center', recommendation: "No problem! Head to the Request Center and submit a request — our team will help you figure out the best approach." },
     ],
   },
   'stuck-other': {
@@ -83,8 +83,8 @@ const nodes: Record<string, WizardNode> = {
     options: [
       { label: 'I need brand guidelines or standards info', anchorId: 'brand-resources', recommendation: "The Brand Resources section has brand guidelines, color palettes, typography rules, and more." },
       { label: 'I need to plan a campaign or event', anchorId: 'request-center', recommendation: "The Request Center has a campaign planning flow — select 'Plan a campaign or event' to get started." },
-      { label: 'I want to share a story or announcement', recommendation: "Send your story to marketing@envisionus.com — include details and any photos, and we'll take it from there." },
-      { label: "I still don't know — I'd like to talk to someone", recommendation: "Totally fine! Reach out to the marketing team at marketing@envisionus.com or use the Contact Us page. We're happy to help." },
+      { label: 'I want to share a story or announcement', anchorId: 'story-submission', recommendation: "Use the Story Submission form to share your story — include details and any photos, and we'll take it from there." },
+      { label: "I still don't know — I'd like to talk to someone", recommendation: "Totally fine! Use the Contact Us page at the top of the site to send a message to the marketing team. We're happy to help." },
     ],
   },
 
@@ -98,7 +98,7 @@ const nodes: Record<string, WizardNode> = {
       { label: 'A template (presentation, document, etc.)', anchorId: 'templates', recommendation: "Check out the Templates section — we have ready-to-use templates for presentations, documents, and more." },
       { label: 'Photos, images, or video', anchorId: 'request-center', recommendation: "Head to the Request Center and choose 'Find photos or video' to search approved imagery." },
       { label: 'Approved messaging or boilerplate text', anchorId: 'brand-resources', recommendation: "Approved messaging and boilerplate copy can be found in the Brand Resources section." },
-      { label: "Something else — I'm not sure where it lives", recommendation: "Try the search bar at the top of the page, or email marketing@envisionus.com and we'll point you in the right direction." },
+      { label: "Something else — I'm not sure where it lives", recommendation: "Try the search bar at the top of the page, or use the Contact Us page to send a message and we'll point you in the right direction." },
     ],
   },
 
@@ -131,8 +131,8 @@ const nodes: Record<string, WizardNode> = {
       { label: 'A design or creative request', anchorId: 'request-center', recommendation: "Go to the Request Center and choose 'Create something' or 'Request something custom' to submit your design request." },
       { label: 'A print or reprint order', anchorId: 'request-center', recommendation: "Head to the Request Center and select 'Request something custom' — mention it's a print/reprint in your brief." },
       { label: 'A website or content update', anchorId: 'request-center', recommendation: "Go to the Request Center and select 'Update web or content' for your web request." },
-      { label: 'A story or announcement submission', recommendation: "Email your story to marketing@envisionus.com. Include details, quotes, and any photos you'd like us to consider." },
-      { label: "I'm not sure what type of request I need", recommendation: "No problem! Email marketing@envisionus.com with a description of what you need, and we'll route it to the right person." },
+      { label: 'A story or announcement submission', anchorId: 'story-submission', recommendation: "Use the Story Submission form to share your story. Include details, quotes, and any photos you'd like us to consider." },
+      { label: "I'm not sure what type of request I need", recommendation: "No problem! Use the Contact Us page to send a message with a description of what you need, and we'll route it to the right person." },
     ],
   },
 };

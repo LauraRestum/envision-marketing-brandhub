@@ -12,6 +12,7 @@ const MJM_PASSWORD = 'MJMonly';
 
 interface Props {
   onClose: () => void;
+  onContactClick?: () => void;
 }
 
 interface Answers {
@@ -58,7 +59,7 @@ function getFormatBadgeLabel(fileType: string): string {
   }
 }
 
-export function LetterheadDownloader({ onClose }: Props) {
+export function LetterheadDownloader({ onClose, onContactClick }: Props) {
   const [stepIndex, setStepIndex] = useState(0);
   const [answers, setAnswers] = useState<Answers>({});
   const [showResults, setShowResults] = useState(false);
@@ -337,7 +338,7 @@ export function LetterheadDownloader({ onClose }: Props) {
             )}
 
             <div className="logo-dl__footer-note">
-              Not finding what you need? <button className="logo-dl__link-btn" onClick={handleStartOver}>Try different options</button> or contact <a href="mailto:marketing@envisionus.com" className="logo-dl__email-link">marketing@envisionus.com</a>
+              Not finding what you need? <button className="logo-dl__link-btn" onClick={handleStartOver}>Try different options</button> or <button className="logo-dl__link-btn" onClick={onContactClick}>contact the marketing team</button>
             </div>
           </div>
         )}
