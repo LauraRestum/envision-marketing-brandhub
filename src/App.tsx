@@ -16,6 +16,7 @@ import { ContactPage } from '@/components/ContactPage';
 import { HelpWizard } from '@/components/HelpWizard';
 import { MessagingAssistant } from '@/components/MessagingAssistant';
 import { LogoDownloader } from '@/components/LogoDownloader';
+import { LetterheadDownloader } from '@/components/LetterheadDownloader';
 
 export default function App() {
   const [activeModal, setActiveModal] = useState<string | null>(null);
@@ -23,6 +24,7 @@ export default function App() {
   const [showWizard, setShowWizard] = useState(false);
   const [showMessaging, setShowMessaging] = useState(false);
   const [showLogoDownloader, setShowLogoDownloader] = useState(false);
+  const [showLetterheadDownloader, setShowLetterheadDownloader] = useState(false);
   const handleAction = useAction(setActiveModal);
 
   function handleWizardNavigate(anchorId: string) {
@@ -52,7 +54,7 @@ export default function App() {
           <p className="hero__subtitle">
             Find brand assets, download templates, submit requests, or share a story — all in one place.
           </p>
-          <UniversalSearch onAction={handleAction} onLogoDownloader={() => setShowLogoDownloader(true)} />
+          <UniversalSearch onAction={handleAction} onLogoDownloader={() => setShowLogoDownloader(true)} onLetterheadDownloader={() => setShowLetterheadDownloader(true)} />
         </div>
       </section>
 
@@ -67,10 +69,10 @@ export default function App() {
 
       <main className="main">
         {/* Brand Resources */}
-        <ResourceGrid onAction={handleAction} onMessagingAssistant={() => setShowMessaging(true)} onLogoDownloader={() => setShowLogoDownloader(true)} />
+        <ResourceGrid onAction={handleAction} onMessagingAssistant={() => setShowMessaging(true)} onLogoDownloader={() => setShowLogoDownloader(true)} onLetterheadDownloader={() => setShowLetterheadDownloader(true)} />
 
         {/* Templates */}
-        <TemplateGrid onAction={handleAction} />
+        <TemplateGrid onAction={handleAction} onLetterheadDownloader={() => setShowLetterheadDownloader(true)} />
 
         {/* Request Center — gated decision flow + smart intake */}
         <RequestFlow />
@@ -98,6 +100,11 @@ export default function App() {
       {/* Logo Downloader overlay */}
       {showLogoDownloader && (
         <LogoDownloader onClose={() => setShowLogoDownloader(false)} />
+      )}
+
+      {/* Letterhead Downloader overlay */}
+      {showLetterheadDownloader && (
+        <LetterheadDownloader onClose={() => setShowLetterheadDownloader(false)} />
       )}
 
       {/* Messaging Assistant overlay */}

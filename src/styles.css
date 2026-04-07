@@ -953,6 +953,11 @@ img {
   color: var(--brand-cyan-dark);
 }
 
+.resource-card__tag--updated {
+  background: var(--brand-yellow-bg);
+  color: #946b00;
+}
+
 .resource-card__type {
   font-size: var(--text-xs);
   font-weight: 500;
