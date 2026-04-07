@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { Icon } from './Icons';
 import {
   allLetterheadAssets,
@@ -7,6 +7,8 @@ import {
   type LetterheadOffice,
   type LetterheadFileType,
 } from '@/data/letterheadAssets';
+
+const MJM_PASSWORD = 'MJMonly';
 
 interface Props {
   onClose: () => void;
@@ -60,13 +62,32 @@ export function LetterheadDownloader({ onClose }: Props) {
   const [stepIndex, setStepIndex] = useState(0);
   const [answers, setAnswers] = useState<Answers>({});
   const [showResults, setShowResults] = useState(false);
+  const [passwordInput, setPasswordInput] = useState('');
+  const [passwordUnlocked, setPasswordUnlocked] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+  const [showPasswordGate, setShowPasswordGate] = useState(false);
 
   const currentStep = lhWizardSteps[stepIndex];
+
+  // Determine which formats are available for the selected office
+  const availableFormats = useMemo(() => {
+    if (!answers.office) return new Set<string>();
+    const officeAssets = allLetterheadAssets.filter(
+      (a) => a.office === answers.office
+    );
+    return new Set(officeAssets.map((a) => a.fileType));
+  }, [answers.office]);
 
   const handleSelect = useCallback(
     (optionId: string) => {
       const newAnswers = { ...answers, [currentStep.id]: optionId };
       setAnswers(newAnswers);
+
+      // If they just picked MJM and haven't unlocked, show password gate
+      if (currentStep.id === 'office' && optionId === 'desk-of-mjm' && !passwordUnlocked) {
+        setShowPasswordGate(true);
+        return;
+      }
 
       if (stepIndex + 1 >= lhWizardSteps.length) {
         setShowResults(true);
@@ -74,10 +95,32 @@ export function LetterheadDownloader({ onClose }: Props) {
         setStepIndex(stepIndex + 1);
       }
     },
-    [answers, currentStep, stepIndex]
+    [answers, currentStep, stepIndex, passwordUnlocked]
   );
 
+  const handlePasswordSubmit = useCallback(() => {
+    if (passwordInput === MJM_PASSWORD) {
+      setPasswordUnlocked(true);
+      setShowPasswordGate(false);
+      setPasswordError(false);
+      // Advance to format step
+      setStepIndex(1);
+    } else {
+      setPasswordError(true);
+    }
+  }, [passwordInput]);
+
   const handleBack = useCallback(() => {
+    if (showPasswordGate) {
+      setShowPasswordGate(false);
+      setPasswordInput('');
+      setPasswordError(false);
+      // Remove the office answer so they can pick again
+      const cleaned = { ...answers };
+      delete cleaned.office;
+      setAnswers(cleaned);
+      return;
+    }
     if (showResults) {
       setShowResults(false);
       return;
@@ -90,12 +133,15 @@ export function LetterheadDownloader({ onClose }: Props) {
       setAnswers(cleaned);
       setStepIndex(prev);
     }
-  }, [showResults, stepIndex, answers]);
+  }, [showResults, showPasswordGate, stepIndex, answers]);
 
   const handleStartOver = useCallback(() => {
     setStepIndex(0);
     setAnswers({});
     setShowResults(false);
+    setShowPasswordGate(false);
+    setPasswordInput('');
+    setPasswordError(false);
   }, []);
 
   const handleDownload = useCallback((asset: LetterheadAsset) => {
@@ -184,15 +230,49 @@ export function LetterheadDownloader({ onClose }: Props) {
           </div>
         )}
 
+        {/* Password Gate */}
+        {showPasswordGate && (
+          <div className="logo-dl__step">
+            <div className="logo-dl__step-counter">Password Required</div>
+            <h3 className="logo-dl__question">This letterhead is restricted. Enter the password to continue.</h3>
+            <div className="logo-dl__password-wrap">
+              <input
+                type="password"
+                className={`logo-dl__password-input${passwordError ? ' logo-dl__password-input--error' : ''}`}
+                placeholder="Enter password"
+                value={passwordInput}
+                onChange={(e) => { setPasswordInput(e.target.value); setPasswordError(false); }}
+                onKeyDown={(e) => { if (e.key === 'Enter') handlePasswordSubmit(); }}
+                autoFocus
+              />
+              <button className="logo-dl__download-btn" onClick={handlePasswordSubmit}>
+                Unlock
+              </button>
+            </div>
+            {passwordError && (
+              <p className="logo-dl__password-error">Incorrect password. Please try again.</p>
+            )}
+          </div>
+        )}
+
         {/* Wizard Steps */}
-        {!showResults && currentStep && (
+        {!showResults && !showPasswordGate && currentStep && (
           <div className="logo-dl__step">
             <div className="logo-dl__step-counter">
               Step {stepIndex + 1} of {lhWizardSteps.length}
             </div>
             <h3 className="logo-dl__question">{currentStep.question}</h3>
             <div className="logo-dl__options">
-              {currentStep.options.map((option) => (
+              {currentStep.options
+                .filter((option) => {
+                  // On the format step, only show formats that exist for this office
+                  if (currentStep.id === 'format') {
+                    if (option.id === 'all') return true;
+                    return availableFormats.has(option.id);
+                  }
+                  return true;
+                })
+                .map((option) => (
                 <button
                   key={option.id}
                   className="logo-dl__option"

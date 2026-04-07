@@ -4320,6 +4320,39 @@ img {
   background: var(--brand-green-dark);
 }
 
+/* Password gate */
+.logo-dl__password-wrap {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.logo-dl__password-input {
+  flex: 1;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: var(--font);
+  font-size: var(--text-base);
+  transition: border-color var(--duration-fast) var(--ease);
+}
+
+.logo-dl__password-input:focus {
+  outline: none;
+  border-color: var(--brand-cyan);
+  box-shadow: var(--shadow-glow);
+}
+
+.logo-dl__password-input--error {
+  border-color: var(--red-500);
+}
+
+.logo-dl__password-error {
+  font-size: var(--text-sm);
+  color: var(--red-500);
+  margin-top: var(--space-2);
+}
+
 .logo-dl__footer-note {
   margin-top: var(--space-6);
   padding-top: var(--space-4);
