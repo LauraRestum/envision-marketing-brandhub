@@ -9,6 +9,7 @@ import { ResourceGrid } from '@/components/ResourceGrid';
 import { TemplateGrid } from '@/components/TemplateGrid';
 import { RequestFlow } from '@/components/RequestFlow';
 import { StorySubmission } from '@/components/StorySubmission';
+import { SocialMediaHub } from '@/components/SocialMediaHub';
 import { Footer } from '@/components/Footer';
 import { Modal } from '@/components/Modal';
 import { ContactPage } from '@/components/ContactPage';
@@ -71,6 +72,9 @@ export default function App() {
 
         {/* Request Center — gated decision flow + smart intake */}
         <RequestFlow />
+
+        {/* Social Media Hub — platform links + content routing */}
+        <SocialMediaHub />
       </main>
 
       {/* Story Submission — dedicated section, not a modal */}
