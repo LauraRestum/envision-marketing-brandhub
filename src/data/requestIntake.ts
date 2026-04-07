@@ -30,6 +30,8 @@ export interface IntakeQuestion {
   vagueSignals?: string[];
   /** Maps to a ClickUp form field name for pre-fill. */
   fieldKey: string;
+  /** If true, user can skip this question. */
+  optional?: boolean;
 }
 
 export interface IntakeDefinition {
@@ -139,7 +141,13 @@ export function assessScope(
   questions: IntakeQuestion[],
   answers: Record<string, string>
 ): ScopeAssessment {
-  const tiers = questions.map((q) => assessAnswer(q, answers[q.id] ?? '').tier);
+  const assessed = questions.map((q) => ({
+    tier: assessAnswer(q, answers[q.id] ?? '').tier,
+    optional: q.optional ?? false,
+    empty: !(answers[q.id] ?? '').trim(),
+  }));
+  // Optional empty answers are fine — do not count them as vague
+  const tiers = assessed.filter((a) => !(a.optional && a.empty)).map((a) => a.tier);
   const vagueCount = tiers.filter((t) => t === 'vague').length;
   const goodCount = tiers.filter((t) => t === 'good').length;
 
@@ -165,7 +173,7 @@ export function assessScope(
     };
   }
 
-  if (goodCount === questions.length) {
+  if (goodCount === tiers.length) {
     return {
       tier: 'ready',
       label: 'Ready to submit',
@@ -211,167 +219,429 @@ export function generateBrief(
   return lines.join('\n');
 }
 
+// ── Shared dropdown options (match ClickUp form exactly) ──
+
+const DEPARTMENTS = ['Corporate', 'EVRC', 'Foundation', 'ECDC', 'Interface'];
+const LOCATIONS = ['Wichita', 'Dallas', 'BSCs', 'Company-wide'];
+const MAJOR_EVENTS = ['None', 'Golf', 'Gala', 'White Cane Day', 'Corporate Breakfast'];
+const FINAL_DELIVERABLES = [
+  'PRINT: Specify the item (Flyer, brochure, signage, rack card, etc.)',
+  'DIGITAL: Specify the item (Social graphic, web banner, email, etc.)',
+  'Combination - Print & Digital',
+];
+const GRAPHIC_NEEDS = ['Images Provided', 'Stock Imagery Needed', 'New Photos/Video Needed'];
+const PRIORITY_LEVELS = ['Low: 3+ weeks', 'Normal: 1-2 weeks', 'High: Less than 1 week', 'Urgent: CRITICAL EMERGENCY'];
+const WEB_PRIORITY_LEVELS = ['Low: General maintenance or future event', 'Normal: Launch in 1-2 weeks', 'High: Less than 1 week', 'Urgent: CRITICAL EMERGENCY'];
+
+// ── Shared timeline specificity signals ──
+
+const TIMELINE_SIGNALS = ['by', 'before', 'deadline', 'date', 'week of', 'no later than', 'end of', 'beginning of', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+
 // ── Intake definitions per request type ──
+// Each definition maps 1:1 to a ClickUp form. Questions cover every
+// form field except file uploads (which the user handles on the form).
 
 export const intakeDefinitions: Record<string, IntakeDefinition> = {
+
+  // ────────────────────────────────────────────────
+  // DESIGN / PRINT MARKETING REQUEST FORM
+  // ClickUp form: 8cgpx7v-19293
+  // ────────────────────────────────────────────────
   'design-request': {
     id: 'design-request',
-    title: 'Design Request',
-    description: 'Tell us what you need designed. The more specific you are, the faster we can deliver.',
+    title: 'Design / Print Request',
+    description: 'Answer these questions and we will pre-fill the ClickUp form for you. You will only need to upload files.',
     emailSubject: 'Design Request',
     embedUrl: 'https://forms.clickup.com/9010115835/f/8cgpx7v-19293/A6NNTH5EOKPY0I434C',
     questions: [
       {
-        id: 'deliverable',
-        label: 'What do you need created?',
-        placeholder: 'e.g., A tri-fold brochure for the Q3 open house at EVRC, 8.5x11 folded',
-        hints: ['Name the specific deliverable', 'Include format or size if you know it'],
-        specificitySignals: ['brochure', 'flyer', 'flyers', 'poster', 'posters', 'infographic', 'presentation', 'banner', 'postcard', 'rack card', 'one-pager', 'social post', 'email', 'newsletter', 'slide'],
-        vagueSignals: ['something', 'stuff', 'thing', 'not sure', 'whatever', 'just need', 'make something'],
-        fieldKey: 'deliverable',
+        id: 'requestor_name',
+        label: 'Your name',
+        placeholder: 'e.g., Jane Smith',
+        fieldKey: 'Requestor Name',
+      },
+      {
+        id: 'department',
+        label: 'Department',
+        placeholder: 'Select your department',
+        choices: DEPARTMENTS,
+        fieldKey: 'Department',
+      },
+      {
+        id: 'location',
+        label: 'General location',
+        placeholder: 'Select your location',
+        choices: LOCATIONS,
+        fieldKey: 'General Location',
+      },
+      {
+        id: 'major_event',
+        label: 'Is this tied to a major event?',
+        placeholder: 'Select if applicable',
+        choices: MAJOR_EVENTS,
+        fieldKey: 'Major Event',
+      },
+      {
+        id: 'project_name',
+        label: 'Project name',
+        placeholder: 'e.g., Q3 Open House Brochure for EVRC',
+        hints: ['Short, descriptive name for this project or event'],
+        fieldKey: 'Project Name',
+      },
+      {
+        id: 'goal',
+        label: 'What is the goal and call to action?',
+        placeholder: 'e.g., Drive attendance to the open house. CTA: Register at envisionus.com/openhouse',
+        hints: ['What should the audience do after seeing this?', 'e.g., Register, Donate, Attend, Contact Us'],
+        specificitySignals: ['register', 'donate', 'attend', 'contact', 'visit', 'call', 'sign up', 'enroll', 'apply', 'learn more', 'rsvp'],
+        vagueSignals: ['general use', 'just because', 'idk'],
+        fieldKey: 'Project Goal & Call to Action',
       },
       {
         id: 'audience',
-        label: 'Who is this for?',
-        placeholder: 'e.g., Prospective families visiting ECDC during enrollment season',
-        hints: ['Internal team? External audience?', 'Be specific about who will see this'],
-        specificitySignals: ['families', 'staff', 'patients', 'donors', 'partners', 'leadership', 'employees', 'community', 'students', 'visitors'],
-        fieldKey: 'audience',
+        label: 'Who is the primary audience?',
+        placeholder: 'e.g., Blind/Visually Impaired Individuals, Donors, Employees',
+        hints: ['Who are we talking to?'],
+        specificitySignals: ['families', 'staff', 'patients', 'donors', 'partners', 'leadership', 'employees', 'community', 'students', 'visitors', 'customers', 'providers', 'blind', 'visually impaired'],
+        fieldKey: 'Primary Audience',
       },
       {
-        id: 'purpose',
-        label: 'What is this for?',
-        placeholder: 'e.g., Handing out at the annual open house on June 15. Need to highlight new programs and enrollment info.',
-        hints: ['Event, campaign, or ongoing use?', 'What action should the audience take?'],
-        specificitySignals: ['event', 'campaign', 'launch', 'open house', 'conference', 'enrollment', 'recruitment', 'awareness', 'fundraising'],
-        vagueSignals: ['general use', 'just because', 'idk'],
-        fieldKey: 'purpose',
+        id: 'usage',
+        label: 'How will this be used?',
+        placeholder: 'e.g., Event handout at the open house, posted signage in the lobby',
+        hints: ['Event handout, posted signage, mailed piece, digital sharing, internal reference?'],
+        specificitySignals: ['handout', 'signage', 'mailed', 'digital', 'internal', 'event', 'posted', 'email', 'social media', 'presentation'],
+        fieldKey: 'How will this be used?',
       },
       {
-        id: 'timeline',
-        label: 'When do you need it?',
-        placeholder: 'e.g., Final version by May 30. Draft review by May 20.',
-        hints: ['Include the hard deadline', 'Is there a review cycle?'],
-        specificitySignals: ['by', 'before', 'deadline', 'date', 'week of', 'no later than', 'end of', 'beginning of', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
+        id: 'distribution',
+        label: 'Where will this be distributed or displayed?',
+        placeholder: 'e.g., On-site at EVRC, social media, and partner locations',
+        hints: ['On-site, website, social media, email, partner location?'],
+        specificitySignals: ['on-site', 'website', 'social media', 'email', 'partner', 'lobby', 'office', 'campus', 'community'],
+        fieldKey: 'Where will this be distributed or displayed?',
+      },
+      {
+        id: 'deliverable',
+        label: 'What is the final deliverable?',
+        placeholder: 'Select the type',
+        hints: ['Include sizing or print quantities in the next question'],
+        choices: FINAL_DELIVERABLES,
+        fieldKey: 'Final Deliverable',
+      },
+      {
+        id: 'due_date',
+        label: 'When do you need the final delivery?',
+        placeholder: 'e.g., May 30, 2026',
+        hints: ['Enter the date you need the finished piece'],
+        specificitySignals: TIMELINE_SIGNALS,
         vagueSignals: ['asap', 'whenever', 'soon', 'rush', 'urgent'],
-        fieldKey: 'timeline',
+        fieldKey: 'Requested Final Delivery Due date',
       },
       {
-        id: 'content',
-        label: 'Do you have content ready, or do you need help writing it?',
-        placeholder: 'e.g., I have the main copy in a Google Doc. Need help with the headline and call to action.',
-        hints: ['Link to a doc if you have one', 'List what you have vs. what you need'],
-        fieldKey: 'content_status',
+        id: 'due_date_driver',
+        label: 'What is driving the due date?',
+        placeholder: 'e.g., Tied to the annual open house on June 15',
+        hints: ['Is this tied to a public event, deadline, or external commitment?'],
+        specificitySignals: ['event', 'launch', 'conference', 'board meeting', 'open house', 'deadline', 'commitment', 'print date'],
+        fieldKey: 'What is driving the Due Date?',
+      },
+      {
+        id: 'gl_code',
+        label: 'GL Code (for production expenses)',
+        placeholder: 'e.g., 5200-100-00',
+        hints: ['Ask your manager if unsure'],
+        fieldKey: 'GL Code (for production expenses)',
+      },
+      {
+        id: 'requirements',
+        label: 'Sizing and brand requirements',
+        placeholder: 'e.g., 8.5x11, must include Envision logo and ADA disclaimer',
+        hints: ['Sizing requirements, required logos, disclaimers, or brand elements'],
+        fieldKey: 'Requirements',
+      },
+      {
+        id: 'messaging',
+        label: 'What messaging or content must be included?',
+        placeholder: 'e.g., Event date, location, registration link, keynote speaker name. Full copy in attached Word doc.',
+        hints: ['Who, what, when, where, why', 'Attach a Word doc in the Project Files on the form'],
+        fieldKey: 'Messaging',
+      },
+      {
+        id: 'graphic_needs',
+        label: 'What are your graphic/image needs?',
+        placeholder: 'Select one',
+        choices: GRAPHIC_NEEDS,
+        fieldKey: 'Graphic Needs',
+      },
+      {
+        id: 'reference_pieces',
+        label: 'Any reference pieces or inspiration?',
+        placeholder: 'e.g., Similar to the 2024 Gala invite. See link: ...',
+        hints: ['Links or examples you want this to feel similar to'],
+        optional: true,
+        fieldKey: 'Reference Pieces',
+      },
+      {
+        id: 'responsible_accuracy',
+        label: 'Who is responsible for factual accuracy?',
+        placeholder: 'e.g., Sarah Johnson, Program Director',
+        hints: ['Name and title of the person who can verify content'],
+        fieldKey: 'Responsible for Accuracy',
+      },
+      {
+        id: 'approvals',
+        label: 'Who provides final approval?',
+        placeholder: 'e.g., Tom Williams, VP of Marketing',
+        hints: ['Name and title of the person who gives the green light'],
+        fieldKey: 'Approvals Needed',
+      },
+      {
+        id: 'priority',
+        label: 'Priority level',
+        placeholder: 'Select based on your deadline',
+        choices: PRIORITY_LEVELS,
+        fieldKey: 'Priority Level',
       },
     ],
   },
 
+  // ────────────────────────────────────────────────
+  // WEB UPDATE / DIGITAL CONTENT UPDATE FORM
+  // ClickUp form: 8cgpx7v-94453
+  // ────────────────────────────────────────────────
   'web-request': {
     id: 'web-request',
-    title: 'Web Update Request',
-    description: 'Tell us what needs to change on the website.',
+    title: 'Web / Digital Content Update',
+    description: 'Answer these questions and we will pre-fill the ClickUp form for you. You will only need to upload attachments.',
     emailSubject: 'Web Update Request',
     embedUrl: 'https://forms.clickup.com/9010115835/f/8cgpx7v-94453/JK968N8IMKLFUBBTMI',
     questions: [
       {
-        id: 'page',
-        label: 'Which page or section needs updating?',
-        placeholder: 'e.g., https://envisionus.com/services/evrc — the "Our Team" section',
-        hints: ['Paste the URL if you have it', 'Describe the page location if no URL'],
-        specificitySignals: ['http', 'www', '.com', 'page', 'section', 'header', 'footer', 'sidebar', 'nav'],
-        fieldKey: 'page_url',
+        id: 'requestor_name',
+        label: 'Your name',
+        placeholder: 'e.g., Jane Smith',
+        fieldKey: 'Requestor Name',
       },
       {
-        id: 'change',
-        label: 'What needs to change?',
-        placeholder: 'e.g., Replace the team photo with the updated one from January. Update Dr. Smith\'s title to "Medical Director."',
-        hints: ['Be specific: what text, image, or section?', 'Old value → new value helps'],
+        id: 'request_type',
+        label: 'Type of request',
+        placeholder: 'Select one',
+        choices: ['Existing Page Update', 'New Page Request', 'Calendar-Only Listing'],
+        fieldKey: 'Type of Request',
+      },
+      {
+        id: 'update_title',
+        label: 'Update title or event name',
+        placeholder: 'e.g., EVRC Team Page Update, or 2026 Golf Classic Calendar Listing',
+        hints: ['Name of the page being updated or event being added'],
+        fieldKey: 'Update Title or Event Name',
+      },
+      {
+        id: 'description',
+        label: 'Description of changes',
+        placeholder: 'e.g., Update the hours of operation on the contact page to reflect new winter hours.',
+        hints: ['In 1-2 sentences, what needs to change and why?'],
         vagueSignals: ['update it', 'fix it', 'change stuff', 'make it better'],
-        fieldKey: 'change_description',
+        fieldKey: 'Description of Changes',
       },
       {
-        id: 'timeline',
-        label: 'When does this need to go live?',
-        placeholder: 'e.g., Before the board meeting on April 20',
-        specificitySignals: ['by', 'before', 'date', 'week of', 'no later', 'end of', 'beginning of', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday'],
+        id: 'url',
+        label: 'Page URL or location',
+        placeholder: 'e.g., https://envisionus.com/services/evrc',
+        hints: ['Link to the existing page, or describe where a new page should live'],
+        specificitySignals: ['http', 'www', '.com', '.org', 'envision', 'page', 'section'],
+        fieldKey: 'Location (URL)',
+      },
+      {
+        id: 'calendar_details',
+        label: 'Calendar details (if applicable)',
+        placeholder: 'e.g., Host: Foundation Team. June 15, 9am-3pm, Tallgrass Country Club. RSVP: envisionus.com/golf',
+        hints: ['Host name, date(s), start/end times, location, RSVP link'],
+        optional: true,
+        fieldKey: 'Calendar Details (If Applicable)',
+      },
+      {
+        id: 'publish_date',
+        label: 'Target publish date',
+        placeholder: 'e.g., April 20, 2026',
+        hints: ['When does this need to go live?'],
+        specificitySignals: TIMELINE_SIGNALS,
         vagueSignals: ['asap', 'whenever', 'soon'],
-        fieldKey: 'timeline',
+        fieldKey: 'Target Publish Date',
+      },
+      {
+        id: 'priority',
+        label: 'Priority level',
+        placeholder: 'Select based on your publish date',
+        choices: WEB_PRIORITY_LEVELS,
+        fieldKey: 'Priority',
+      },
+      {
+        id: 'final_approval',
+        label: 'Does this need a preview before going live?',
+        placeholder: 'e.g., Yes, Sarah Johnson needs to review before publish',
+        hints: ['If a preview is required, who is responsible for the final green light?'],
+        optional: true,
+        fieldKey: 'Final Approval',
       },
     ],
   },
 
+  // ────────────────────────────────────────────────
+  // MAJOR CAMPAIGN & LARGE-SCALE EVENT FORM
+  // ClickUp form: 8cgpx7v-94493
+  // For high-level initiatives, multi-phase campaigns,
+  // or large organizational events
+  // ────────────────────────────────────────────────
   'campaign-planning': {
     id: 'campaign-planning',
-    title: 'Campaign & Event Planning',
-    description: 'Help us understand the scope so we can plan the right level of support.',
-    emailSubject: 'Campaign & Event Planning Request',
-    embedUrl: 'https://forms.clickup.com/9010115835/f/8cgpx7v-19293/A6NNTH5EOKPY0I434C',
+    title: 'Major Campaign & Large-Scale Event',
+    description: 'This kicks off the discovery process. The Marketing team will schedule a kickoff meeting after you submit.',
+    emailSubject: 'Major Campaign / Large-Scale Event Request',
+    embedUrl: 'https://forms.clickup.com/9010115835/f/8cgpx7v-94493/T6UOLOC4XBZPFPY4E9',
     questions: [
       {
-        id: 'what',
-        label: 'What are you planning?',
-        placeholder: 'e.g., Annual Envision Golf Classic fundraiser — 200+ attendees, May 15 at Tallgrass Country Club',
-        hints: ['Name the event or campaign', 'Include date, location, and expected size'],
-        specificitySignals: ['event', 'campaign', 'launch', 'conference', 'gala', 'golf', 'fundraiser', 'open house', 'webinar', 'summit', 'luncheon', 'banquet', 'workshop', 'seminar', 'fair', 'expo'],
-        fieldKey: 'event_description',
+        id: 'requestor',
+        label: 'Your name',
+        placeholder: 'e.g., Jane Smith',
+        fieldKey: 'Requestor',
       },
       {
-        id: 'deliverables',
-        label: 'What marketing materials do you need?',
-        placeholder: 'e.g., Save-the-date email, event program, table signage, social media posts (3), post-event recap',
-        hints: ['List every deliverable you expect to need', 'Include quantities if known'],
-        specificitySignals: ['flyer', 'flyers', 'poster', 'posters', 'brochure', 'brochures', 'email', 'social', 'program', 'signage', 'banner', 'banners', 'postcard', 'save-the-date', 'recap', 'newsletter', 'slide', 'slides', 'invitation'],
-        fieldKey: 'deliverables',
+        id: 'title',
+        label: 'Campaign or event title',
+        placeholder: 'e.g., 2026 Annual Golf Classic, White Cane Day Awareness Campaign',
+        hints: ['Official name or working title for this initiative'],
+        specificitySignals: ['golf', 'gala', 'white cane', 'corporate breakfast', 'summit', 'conference', 'fundraiser', 'open house', 'awareness', 'campaign', 'classic'],
+        fieldKey: 'Campaign or Event Title',
       },
       {
-        id: 'timeline',
-        label: 'Key dates and deadlines?',
-        placeholder: 'e.g., Save-the-date by March 1. Program finalized by April 15. Social posts start April 20.',
-        hints: ['List milestones in order', 'Include the hard event date'],
-        specificitySignals: ['by', 'before', 'date', 'week of', 'start', 'launch', 'send', 'end of', 'beginning of', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'],
-        vagueSignals: ['asap', 'soon', 'tbd'],
-        fieldKey: 'timeline',
+        id: 'scope',
+        label: 'High-level description and scope',
+        placeholder: 'e.g., Multi-channel fundraiser campaign for the annual Golf Classic. One-time event with 200+ attendees, requiring 8 weeks of pre-event marketing.',
+        hints: ['What is the big picture?', 'One-time event or multi-month initiative?'],
+        fieldKey: 'High-Level Description & Scope',
+      },
+      {
+        id: 'goals',
+        label: 'Strategic goals and key objectives',
+        placeholder: 'e.g., Raise $50k in sponsorships, 200+ attendees, strengthen corporate donor relationships',
+        hints: ['What does success look like?', 'e.g., 500 attendees, $50k raised, new partnership'],
+        specificitySignals: ['attendees', 'raised', 'donations', 'registrations', 'awareness', 'partnership', 'engagement', 'revenue', 'sponsors', 'leads'],
+        fieldKey: 'Strategic Goals & Key Objectives',
+      },
+      {
+        id: 'audience',
+        label: 'Target audience and market segments',
+        placeholder: 'e.g., Primary: Corporate donors and sponsors. Secondary: Community partners and local businesses.',
+        hints: ['Primary and secondary audiences?', 'Specific demographics or stakeholders?'],
+        specificitySignals: ['donors', 'sponsors', 'partners', 'employees', 'families', 'community', 'corporate', 'patients', 'providers', 'leadership', 'blind', 'visually impaired'],
+        fieldKey: 'Target Audience & Market Segments',
       },
       {
         id: 'budget',
-        label: 'Is there a budget or cost constraints?',
-        placeholder: 'e.g., $2,500 for print materials. Digital is covered. Need to keep signage under $500.',
-        choices: ['Yes, I have a budget range', 'No budget constraints', 'Not sure yet'],
-        fieldKey: 'budget',
+        label: 'Budget and funding source',
+        placeholder: 'e.g., $15,000 marketing budget funded by the Foundation grant. Print costs separate.',
+        hints: ['Estimated range?', 'Which department or grant is funding this?'],
+        fieldKey: 'Budget & Funding Source',
+      },
+      {
+        id: 'timeline',
+        label: 'Estimated timeline and key milestones',
+        placeholder: 'e.g., Event: June 15. Save-the-dates by April 1. Invitations by May 1. Social campaign starts May 15.',
+        hints: ['Event date(s) or target launch window', 'Critical external deadlines'],
+        specificitySignals: TIMELINE_SIGNALS,
+        vagueSignals: ['asap', 'soon', 'tbd'],
+        fieldKey: 'Estimated Timeline & Key Milestones',
+      },
+      {
+        id: 'deliverables',
+        label: 'Anticipated deliverables',
+        placeholder: 'e.g., Branding refresh, save-the-date email, printed invitations, social media plan, event signage, web landing page, video production',
+        hints: ['What marketing support will be needed?', 'e.g., Branding, social media, paid ads, signage, video, web page'],
+        specificitySignals: ['branding', 'social media', 'paid', 'advertising', 'signage', 'video', 'web', 'landing page', 'email', 'print', 'brochure', 'invitation', 'program', 'photography'],
+        fieldKey: 'Anticipated Deliverables',
+      },
+      {
+        id: 'stakeholders',
+        label: 'Key stakeholders and final decision maker',
+        placeholder: 'e.g., Project lead: Sarah Johnson. Final approval: Tom Williams, VP. Other voices: Mike Chen (Foundation), Lisa Park (Events)',
+        hints: ['Who are the key voices?', 'Who has final authority on strategy and spend?'],
+        fieldKey: 'Stakeholders & Final Decision Maker',
       },
     ],
   },
 
+  // ────────────────────────────────────────────────
+  // ASSET REQUEST
+  // Same ClickUp form as web-request (8cgpx7v-94453)
+  // but framed for finding/creating assets
+  // ────────────────────────────────────────────────
   'asset-request': {
     id: 'asset-request',
     title: 'Asset Request',
-    description: 'Tell us exactly what you need and we will locate or create it.',
+    description: 'Answer these questions and we will pre-fill the ClickUp form for you. You will only need to upload attachments.',
     emailSubject: 'Asset Request',
     embedUrl: 'https://forms.clickup.com/9010115835/f/8cgpx7v-94453/JK968N8IMKLFUBBTMI',
     questions: [
       {
-        id: 'what',
-        label: 'What do you need?',
-        placeholder: 'e.g., High-res photo of the Wichita building exterior, or the ECDC classroom during a group activity',
-        hints: ['Be as specific as possible', 'Include subject, location, or context'],
+        id: 'requestor_name',
+        label: 'Your name',
+        placeholder: 'e.g., Jane Smith',
+        fieldKey: 'Requestor Name',
+      },
+      {
+        id: 'request_type',
+        label: 'Type of request',
+        placeholder: 'Select one',
+        choices: ['Existing Page Update', 'New Page Request', 'Calendar-Only Listing'],
+        fieldKey: 'Type of Request',
+      },
+      {
+        id: 'update_title',
+        label: 'What asset are you looking for?',
+        placeholder: 'e.g., High-res EVRC building exterior photo, or ECDC classroom activity shots',
+        hints: ['Be specific about the subject, location, or context'],
         vagueSignals: ['something', 'a photo', 'an image', 'a file', 'stuff'],
-        fieldKey: 'asset_description',
+        fieldKey: 'Update Title or Event Name',
       },
       {
-        id: 'usage',
+        id: 'description',
         label: 'How will you use it?',
-        placeholder: 'e.g., For a presentation to the board of directors. Needs to be high-resolution for projection.',
-        hints: ['Print, digital, presentation, social?', 'Does it need a specific size or format?'],
-        specificitySignals: ['print', 'digital', 'presentation', 'social', 'email', 'website', 'brochure', 'newsletter'],
-        fieldKey: 'usage',
+        placeholder: 'e.g., Board presentation — needs to be high-resolution for projection on a large screen',
+        hints: ['Print, digital, presentation, social?', 'Any specific size or format needed?'],
+        specificitySignals: ['print', 'digital', 'presentation', 'social', 'email', 'website', 'brochure', 'newsletter', 'board', 'projection'],
+        fieldKey: 'Description of Changes',
       },
       {
-        id: 'timeline',
+        id: 'url',
+        label: 'Link to existing asset or related page (if any)',
+        placeholder: 'e.g., https://envisionus.com/about — need the hero image from this page',
+        hints: ['Paste a URL if you have a reference'],
+        optional: true,
+        fieldKey: 'Location (URL)',
+      },
+      {
+        id: 'publish_date',
         label: 'When do you need it?',
         placeholder: 'e.g., By next Friday for the board deck',
-        specificitySignals: ['by', 'before', 'date', 'friday', 'monday', 'tuesday', 'wednesday', 'thursday', 'week', 'end of', 'beginning of', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'],
+        specificitySignals: TIMELINE_SIGNALS,
         vagueSignals: ['asap', 'whenever', 'soon'],
-        fieldKey: 'timeline',
+        fieldKey: 'Target Publish Date',
+      },
+      {
+        id: 'priority',
+        label: 'Priority level',
+        placeholder: 'Select based on your timeline',
+        choices: WEB_PRIORITY_LEVELS,
+        fieldKey: 'Priority',
+      },
+      {
+        id: 'final_approval',
+        label: 'Does someone need to review before you use it?',
+        placeholder: 'e.g., No, I just need the file. Or: Yes, Sarah Johnson needs to approve usage.',
+        optional: true,
+        fieldKey: 'Final Approval',
       },
     ],
   },

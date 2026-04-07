@@ -268,12 +268,19 @@ function IntakeFlow({
               <button
                 className="intake__next"
                 onClick={handleNext}
-                disabled={!currentValue.trim()}
+                disabled={!currentValue.trim() && !currentQ.optional}
               >
                 {currentIndex === questions.length - 1 ? 'Review Brief' : 'Next'}
                 <Icon name="arrow-right" />
               </button>
-              <span className="intake__enter-hint">or press Enter</span>
+              {currentQ.optional && !currentValue.trim() && (
+                <button className="intake__skip" onClick={handleNext}>
+                  Skip
+                </button>
+              )}
+              {currentValue.trim() && (
+                <span className="intake__enter-hint">or press Enter</span>
+              )}
             </div>
           </>
         )}
