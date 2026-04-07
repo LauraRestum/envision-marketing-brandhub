@@ -12,6 +12,7 @@ import { imageryRoutingRules } from '@/data/imageryRoutingRules';
 
 export interface ImageryRouteResult {
   subcategory: string;
+  destinationKey: string;
   destinationTitle: string;
   href: string;
   score: number;
@@ -43,6 +44,7 @@ export function resolveImageryRoute(query: string): ImageryRouteResult | null {
 
   return {
     subcategory: bestMatch.subcategory,
+    destinationKey: bestMatch.destination,
     destinationTitle: destination.title,
     href: destination.href,
     score: bestMatch.score,

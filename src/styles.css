@@ -3950,6 +3950,70 @@ img {
   }
 }
 
+/* ============================================================
+   PILLAR TAGS — Color-coded badges for the six strategic pillars.
+   Uses CSS custom properties set via inline style on each tag.
+   ============================================================ */
+
+.pillar-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px 3px 6px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+  background: var(--ptag-bg);
+  color: var(--ptag-text);
+  letter-spacing: 0.01em;
+}
+
+.pillar-tag::before {
+  content: '';
+  display: block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ptag-color);
+  flex-shrink: 0;
+}
+
+/* Pillar tag group (multiple tags side by side) */
+.pillar-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+}
+
+/* ============================================================
+   BLUE BUTTON WHITE-TEXT SAFEGUARD
+   All buttons/links with a blue or navy filled background must
+   render white text. These rules add specificity to guarantee it.
+   ============================================================ */
+
+.social-routing__cta,
+.social-routing__cta:visited {
+  color: var(--white);
+}
+
+.social-feed-card__visit,
+.social-feed-card__visit:visited {
+  color: var(--white);
+}
+
+.intake__next,
+.intake__next:hover:not(:disabled) {
+  color: var(--white);
+}
+
+.imagery-card__open,
+.imagery-card__open:visited {
+  color: var(--white);
+}
+
 @media (max-width: 480px) {
   .social-feed-card__header {
     padding: var(--space-3) var(--space-4);
