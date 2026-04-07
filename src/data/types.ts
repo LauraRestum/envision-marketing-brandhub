@@ -56,6 +56,7 @@ export interface RequestForm {
   actionType: ActionType;
   href?: string;
   modalKey?: string;
+  anchorId?: string;
   embedUrl?: string;
   keywords: string[];
 }
@@ -76,6 +77,7 @@ export interface FeaturedContent {
   actionType: ActionType;
   href?: string;
   modalKey?: string;
+  anchorId?: string;
 }
 
 // ============================================================
