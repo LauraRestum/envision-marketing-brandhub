@@ -68,16 +68,16 @@ interface Outcome {
 
 const OUTCOMES: Record<string, Outcome> = {
   personal: {
-    title: 'Share it on your personal page',
+    title: 'This is a great fit for your personal page',
     message:
-      'This sounds like a great personal post! Sharing from your own account helps extend our reach organically. Use the platform links above to find our official pages for reference, and tag us so we can amplify it.',
+      'Most content like this is best shared from your own account — and that\'s a good thing! Personal posts feel more authentic, reach different audiences, and help extend Envision\'s presence organically. Use the platform links above to find our official pages for reference, and tag us so we can help amplify it.',
     icon: 'users',
     type: 'personal',
   },
   contact: {
     title: 'Let us know about it',
     message:
-      'Since this may tie into an existing campaign, reach out to the marketing team and we\'ll figure out the best way to share it. This doesn\'t guarantee a post on our official pages — but we want to hear about it so we can work it into our strategy.',
+      'Since this may tie into an existing campaign, reach out to the marketing team so we can figure out how it fits. This doesn\'t mean we\'ll post it on an official page — our accounts follow strict content guidelines — but we want to hear about it so we can potentially work it into our strategy.',
     icon: 'message',
     type: 'contact',
   },
@@ -189,9 +189,9 @@ export function SocialMediaHub() {
               <Icon name="help" />
             </div>
             <div>
-              <h3 className="social-routing__title">Have something to share on social media?</h3>
+              <h3 className="social-routing__title">Want to post something on social media?</h3>
               <p className="social-routing__desc">
-                We use each platform intentionally. This quick guide will help you figure out the best path for your content.
+                This quick quiz will help guide you through whether content is best shared on an official Envision page or on your personal page. In most cases, your personal page is the way to go — our official accounts follow pretty specific guidelines and are tied to planned campaigns.
               </p>
             </div>
           </div>
