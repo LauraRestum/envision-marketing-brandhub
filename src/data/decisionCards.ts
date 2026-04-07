@@ -42,8 +42,8 @@ export const secondaryCards: DecisionCard[] = [
     title: 'Share a Story',
     description: 'Submit a story, milestone, or achievement for Envision communications.',
     icon: 'share',
-    actionType: 'email',
-    href: 'mailto:marketing@envisionus.com?subject=Story%20Submission',
+    actionType: 'anchor',
+    anchorId: 'story-submission',
     keywords: ['share', 'story', 'news', 'submit', 'announce'],
   },
   {
