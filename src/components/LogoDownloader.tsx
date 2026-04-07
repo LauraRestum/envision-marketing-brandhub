@@ -140,12 +140,31 @@ export function LogoDownloader({ onClose }: Props) {
   }, []);
 
   const handleDownload = useCallback((asset: LogoAsset) => {
-    const link = document.createElement('a');
-    link.href = asset.path;
-    link.download = asset.path.split('/').pop() || 'logo';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const fileName = asset.path.split('/').pop() || 'logo';
+    const encodedPath = asset.path
+      .split('/')
+      .map((seg) => encodeURIComponent(seg))
+      .join('/');
+
+    fetch(encodedPath)
+      .then((res) => {
+        if (!res.ok) throw new Error(`Download failed: ${res.status}`);
+        return res.blob();
+      })
+      .then((blob) => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      })
+      .catch(() => {
+        // Fallback: open in new tab if fetch fails
+        window.open(encodedPath, '_blank', 'noopener');
+      });
   }, []);
 
   const results = showResults ? filterAssets(answers) : [];
