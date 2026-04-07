@@ -4,9 +4,10 @@ import type { ActionType } from '@/data/types';
 
 interface Props {
   onAction: (target: { actionType: ActionType; href?: string; modalKey?: string; anchorId?: string }) => void;
+  onLetterheadDownloader?: () => void;
 }
 
-export function TemplateGrid({ onAction }: Props) {
+export function TemplateGrid({ onAction, onLetterheadDownloader }: Props) {
   return (
     <section className="section section--alt" id="templates">
       <div className="container">
@@ -19,7 +20,13 @@ export function TemplateGrid({ onAction }: Props) {
         </div>
         <div className="resource-grid">
           {templates.map((t) => (
-            <div key={t.id} className="resource-card" onClick={() => onAction(t)} style={{ cursor: 'pointer' }}>
+            <div key={t.id} className="resource-card" onClick={() => {
+              if (t.id === 'template-letterhead' && onLetterheadDownloader) {
+                onLetterheadDownloader();
+              } else {
+                onAction(t);
+              }
+            }} style={{ cursor: 'pointer' }}>
               <div className="resource-card__top">
                 <div className="resource-card__icon">
                   <Icon name={t.icon || 'document'} />

@@ -6,9 +6,10 @@ interface Props {
   onAction: (target: { actionType: ActionType; href?: string; modalKey?: string; anchorId?: string }) => void;
   onMessagingAssistant?: () => void;
   onLogoDownloader?: () => void;
+  onLetterheadDownloader?: () => void;
 }
 
-export function ResourceGrid({ onAction, onMessagingAssistant, onLogoDownloader }: Props) {
+export function ResourceGrid({ onAction, onMessagingAssistant, onLogoDownloader, onLetterheadDownloader }: Props) {
   return (
     <section className="section" id="brand-resources">
       <div className="container">

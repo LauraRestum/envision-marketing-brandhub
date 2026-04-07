@@ -20,7 +20,7 @@ interface SearchItem {
   icon?: string;
 }
 
-const SEARCH_HINTS = ['logo', 'presentation', 'reprint', 'brand guidelines', 'business card', 'classroom photos', 'gala', 'building'];
+const SEARCH_HINTS = ['logo', 'letterhead', 'presentation', 'reprint', 'brand guidelines', 'business card', 'classroom photos', 'gala'];
 
 function buildIndex(): SearchItem[] {
   const items: SearchItem[] = [];
@@ -39,9 +39,10 @@ function buildIndex(): SearchItem[] {
 interface Props {
   onAction: (target: { actionType: ActionType; href?: string; modalKey?: string; anchorId?: string }) => void;
   onLogoDownloader?: () => void;
+  onLetterheadDownloader?: () => void;
 }
 
-export function UniversalSearch({ onAction, onLogoDownloader }: Props) {
+export function UniversalSearch({ onAction, onLogoDownloader, onLetterheadDownloader }: Props) {
   const [query, setQuery] = useState('');
   const [focused, setFocused] = useState(false);
   const [imageryResult, setImageryResult] = useState<ImageryRouteResult | null>(null);
@@ -91,6 +92,13 @@ export function UniversalSearch({ onAction, onLogoDownloader }: Props) {
   function handleSelectResult(item: SearchItem) {
     if (item.id === 'logos-primary' && onLogoDownloader) {
       onLogoDownloader();
+      setQuery('');
+      setFocused(false);
+      setImageryResult(null);
+      return;
+    }
+    if (item.id === 'template-letterhead' && onLetterheadDownloader) {
+      onLetterheadDownloader();
       setQuery('');
       setFocused(false);
       setImageryResult(null);

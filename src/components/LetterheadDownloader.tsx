@@ -1,108 +1,74 @@
 import { useState, useCallback } from 'react';
 import { Icon } from './Icons';
 import {
-  allLogoAssets,
-  wizardSteps,
-  type LogoAsset,
-  type LogoCategory,
-  type UseCase,
-  type ColorVariant,
-} from '@/data/logoAssets';
+  allLetterheadAssets,
+  lhWizardSteps,
+  type LetterheadAsset,
+  type LetterheadOffice,
+  type LetterheadFileType,
+} from '@/data/letterheadAssets';
 
 interface Props {
   onClose: () => void;
 }
 
 interface Answers {
-  'logo-type'?: string;
-  'use-case'?: string;
-  background?: string;
+  office?: string;
+  format?: string;
 }
 
-function filterAssets(answers: Answers): LogoAsset[] {
-  let results = allLogoAssets;
+function filterAssets(answers: Answers): LetterheadAsset[] {
+  let results = allLetterheadAssets;
 
-  // Filter by category (logo type)
-  if (answers['logo-type']) {
-    results = results.filter((a) => a.category === (answers['logo-type'] as LogoCategory));
+  if (answers.office) {
+    results = results.filter((a) => a.office === (answers.office as LetterheadOffice));
   }
 
-  // Filter by use case
-  if (answers['use-case']) {
-    const uc = answers['use-case'] as UseCase;
-    results = results.filter((a) => a.useCases.includes(uc));
-  }
-
-  // Filter by background → color variant
-  if (answers.background && answers.background !== 'both') {
-    const bg = answers.background;
-    if (bg === 'light') {
-      // Light bg → full-color or black
-      results = results.filter((a) => a.colorVariant !== 'white');
-    } else if (bg === 'dark') {
-      // Dark bg → white or full-color
-      results = results.filter((a) => a.colorVariant !== 'black');
-    }
+  if (answers.format && answers.format !== 'all') {
+    results = results.filter((a) => a.fileType === (answers.format as LetterheadFileType));
   }
 
   return results;
 }
 
-function formatFileSize(format: string): string {
-  switch (format) {
-    case 'png': return 'PNG';
-    case 'jpg': return 'JPG';
-    case 'eps': return 'EPS';
-    case 'ai': return 'AI';
-    case 'pdf': return 'PDF';
-    case 'indd': return 'INDD';
-    default: return format.toUpperCase();
-  }
-}
-
-function getFormatBadgeClass(format: string): string {
-  switch (format) {
-    case 'png':
-    case 'jpg':
+function getFormatBadgeClass(fileType: string): string {
+  switch (fileType) {
+    case 'dotx':
       return 'logo-dl__badge--web';
-    case 'eps':
-    case 'ai':
-    case 'indd':
-      return 'logo-dl__badge--vector';
     case 'pdf':
       return 'logo-dl__badge--pdf';
+    case 'indd':
+      return 'logo-dl__badge--vector';
+    case 'jpg':
+      return 'logo-dl__badge--web';
     default:
       return '';
   }
 }
 
-function getColorDot(variant: ColorVariant): string {
-  switch (variant) {
-    case 'full-color': return '#162B6B';
-    case 'black': return '#111213';
-    case 'white': return '#e4e7ec';
+function getFormatBadgeLabel(fileType: string): string {
+  switch (fileType) {
+    case 'dotx': return 'DOTX';
+    case 'pdf': return 'PDF';
+    case 'indd': return 'INDD';
+    case 'jpg': return 'JPG';
+    default: return fileType.toUpperCase();
   }
 }
 
-export function LogoDownloader({ onClose }: Props) {
+export function LetterheadDownloader({ onClose }: Props) {
   const [stepIndex, setStepIndex] = useState(0);
   const [answers, setAnswers] = useState<Answers>({});
   const [showResults, setShowResults] = useState(false);
 
-  const currentStep = wizardSteps[stepIndex];
+  const currentStep = lhWizardSteps[stepIndex];
 
   const handleSelect = useCallback(
     (optionId: string) => {
       const newAnswers = { ...answers, [currentStep.id]: optionId };
       setAnswers(newAnswers);
 
-      // Social profiles skip background question (they're pre-made)
-      // Legacy logos also skip background
-      const skipBackground =
-        currentStep.id === 'use-case' &&
-        (newAnswers['logo-type'] === 'social-profile' || newAnswers['logo-type'] === 'legacy');
-
-      if (stepIndex + 1 >= wizardSteps.length || skipBackground) {
+      if (stepIndex + 1 >= lhWizardSteps.length) {
         setShowResults(true);
       } else {
         setStepIndex(stepIndex + 1);
@@ -113,19 +79,12 @@ export function LogoDownloader({ onClose }: Props) {
 
   const handleBack = useCallback(() => {
     if (showResults) {
-      // If we skipped a step, go to the right place
-      const skipped =
-        answers['logo-type'] === 'social-profile' || answers['logo-type'] === 'legacy';
-      if (skipped && stepIndex < wizardSteps.length - 1) {
-        setShowResults(false);
-        return;
-      }
       setShowResults(false);
       return;
     }
     if (stepIndex > 0) {
       const prev = stepIndex - 1;
-      const key = wizardSteps[prev].id as keyof Answers;
+      const key = lhWizardSteps[prev].id as keyof Answers;
       const cleaned = { ...answers };
       delete cleaned[key];
       setAnswers(cleaned);
@@ -139,8 +98,8 @@ export function LogoDownloader({ onClose }: Props) {
     setShowResults(false);
   }, []);
 
-  const handleDownload = useCallback((asset: LogoAsset) => {
-    const fileName = asset.path.split('/').pop() || 'logo';
+  const handleDownload = useCallback((asset: LetterheadAsset) => {
+    const fileName = asset.path.split('/').pop() || 'letterhead';
     const encodedPath = asset.path
       .split('/')
       .map((seg) => encodeURIComponent(seg))
@@ -162,17 +121,16 @@ export function LogoDownloader({ onClose }: Props) {
         URL.revokeObjectURL(url);
       })
       .catch(() => {
-        // Fallback: open in new tab if fetch fails
         window.open(encodedPath, '_blank', 'noopener');
       });
   }, []);
 
   const results = showResults ? filterAssets(answers) : [];
 
-  // Build breadcrumb from answers
+  // Build breadcrumbs
   const breadcrumbs: string[] = [];
   for (let i = 0; i < stepIndex; i++) {
-    const step = wizardSteps[i];
+    const step = lhWizardSteps[i];
     const answerId = answers[step.id as keyof Answers];
     if (answerId) {
       const opt = step.options.find((o) => o.id === answerId);
@@ -180,7 +138,7 @@ export function LogoDownloader({ onClose }: Props) {
     }
   }
   if (showResults) {
-    const lastStep = wizardSteps[Math.min(stepIndex, wizardSteps.length - 1)];
+    const lastStep = lhWizardSteps[Math.min(stepIndex, lhWizardSteps.length - 1)];
     const lastAnswer = answers[lastStep.id as keyof Answers];
     if (lastAnswer) {
       const opt = lastStep.options.find((o) => o.id === lastAnswer);
@@ -195,12 +153,12 @@ export function LogoDownloader({ onClose }: Props) {
         <div className="logo-dl__header">
           <div className="logo-dl__header-left">
             <div className="logo-dl__icon-wrap">
-              <Icon name="download" />
+              <Icon name="document" />
             </div>
             <div>
-              <h2 className="logo-dl__title">Logo Downloads</h2>
+              <h2 className="logo-dl__title">Letterhead Downloads</h2>
               <p className="logo-dl__subtitle">
-                Answer a few questions and we'll get you the right file.
+                Tell us your office and what format you need.
               </p>
             </div>
           </div>
@@ -230,7 +188,7 @@ export function LogoDownloader({ onClose }: Props) {
         {!showResults && currentStep && (
           <div className="logo-dl__step">
             <div className="logo-dl__step-counter">
-              Step {stepIndex + 1} of {wizardSteps.length}
+              Step {stepIndex + 1} of {lhWizardSteps.length}
             </div>
             <h3 className="logo-dl__question">{currentStep.question}</h3>
             <div className="logo-dl__options">
@@ -260,11 +218,11 @@ export function LogoDownloader({ onClose }: Props) {
               <h3 className="logo-dl__results-title">
                 {results.length > 0
                   ? `Here are your ${results.length} matching file${results.length !== 1 ? 's' : ''}`
-                  : 'No exact matches found'}
+                  : 'No files available for this combination'}
               </h3>
               {results.length === 0 && (
                 <p className="logo-dl__results-empty">
-                  Try adjusting your selections, or <button className="logo-dl__link-btn" onClick={handleStartOver}>start over</button> with different choices.
+                  This office may not have that format available yet. Try <button className="logo-dl__link-btn" onClick={handleStartOver}>selecting a different format</button> or contact the marketing team.
                 </p>
               )}
             </div>
@@ -275,14 +233,9 @@ export function LogoDownloader({ onClose }: Props) {
                   <div key={asset.id} className="logo-dl__file">
                     <div className="logo-dl__file-info">
                       <div className="logo-dl__file-top">
-                        <span className={`logo-dl__badge ${getFormatBadgeClass(asset.format)}`}>
-                          {formatFileSize(asset.format)}
+                        <span className={`logo-dl__badge ${getFormatBadgeClass(asset.fileType)}`}>
+                          {getFormatBadgeLabel(asset.fileType)}
                         </span>
-                        <span
-                          className="logo-dl__color-dot"
-                          style={{ background: getColorDot(asset.colorVariant) }}
-                          title={asset.colorVariant}
-                        />
                         <span className="logo-dl__file-format">{asset.formatLabel}</span>
                       </div>
                       <div className="logo-dl__file-name">{asset.name}</div>
