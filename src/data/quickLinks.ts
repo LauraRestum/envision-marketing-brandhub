@@ -41,6 +41,13 @@ export const quickLinks: QuickLink[] = [
     modalKey: 'web-request',
   },
   {
+    id: 'quick-social-hub',
+    title: 'Social Media',
+    icon: 'social',
+    actionType: 'anchor',
+    anchorId: 'social-hub',
+  },
+  {
     id: 'quick-story',
     title: 'Share a Story',
     icon: 'star',
