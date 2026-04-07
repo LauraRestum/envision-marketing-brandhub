@@ -9,7 +9,27 @@ interface Props {
   onLetterheadDownloader?: () => void;
 }
 
+const buckets = [
+  {
+    label: 'Logos & Visual Identity',
+    description: 'Official logos, imagery, and color palette',
+    ids: ['logos-primary', 'logos-subbrands', 'brand-imagery', 'brand-colors'],
+  },
+  {
+    label: 'Guidelines & Messaging',
+    description: 'Brand standards, approved copy, and boilerplate language',
+    ids: ['brand-book', 'brand-messaging', 'brand-typography', 'brand-boilerplate'],
+  },
+  {
+    label: 'Digital Assets',
+    description: 'Email signatures, social media assets, and more',
+    ids: ['email-signatures', 'social-media-assets'],
+  },
+];
+
 export function ResourceGrid({ onAction, onMessagingAssistant, onLogoDownloader, onLetterheadDownloader }: Props) {
+  const resourceMap = Object.fromEntries(resources.map((r) => [r.id, r]));
+
   return (
     <section className="section" id="brand-resources">
       <div className="container">
@@ -39,34 +59,46 @@ export function ResourceGrid({ onAction, onMessagingAssistant, onLogoDownloader,
           </button>
         )}
 
-        <div className="resource-grid">
-          {resources.map((r) => (
-            <div key={r.id} className="resource-card" onClick={() => {
-              if (r.id === 'logos-primary' && onLogoDownloader) {
-                onLogoDownloader();
-              } else {
-                onAction(r);
-              }
-            }} style={{ cursor: 'pointer' }}>
-              <div className="resource-card__top">
-                <div className="resource-card__icon">
-                  <Icon name={r.icon || 'document'} />
-                </div>
-                {r.tag && (
-                  <span className={`resource-card__tag resource-card__tag--${r.tag.toLowerCase()}`}>
-                    {r.tag}
-                  </span>
-                )}
-              </div>
-              <div className="resource-card__type">{r.type}</div>
-              <h3 className="resource-card__title">{r.title}</h3>
-              <p className="resource-card__desc">{r.description}</p>
-              <span className="resource-card__cta">
-                {r.cta} <Icon name="arrow-right" />
-              </span>
+        {buckets.map((bucket) => (
+          <div key={bucket.label} className="resource-bucket">
+            <div className="resource-bucket__header">
+              <h3 className="resource-bucket__title">{bucket.label}</h3>
+              <p className="resource-bucket__desc">{bucket.description}</p>
             </div>
-          ))}
-        </div>
+            <div className="resource-grid">
+              {bucket.ids.map((id) => {
+                const r = resourceMap[id];
+                if (!r) return null;
+                return (
+                  <div key={r.id} className="resource-card" onClick={() => {
+                    if (r.id === 'logos-primary' && onLogoDownloader) {
+                      onLogoDownloader();
+                    } else {
+                      onAction(r);
+                    }
+                  }} style={{ cursor: 'pointer' }}>
+                    <div className="resource-card__top">
+                      <div className="resource-card__icon">
+                        <Icon name={r.icon || 'document'} />
+                      </div>
+                      {r.tag && (
+                        <span className={`resource-card__tag resource-card__tag--${r.tag.toLowerCase()}`}>
+                          {r.tag}
+                        </span>
+                      )}
+                    </div>
+                    <div className="resource-card__type">{r.type}</div>
+                    <h3 className="resource-card__title">{r.title}</h3>
+                    <p className="resource-card__desc">{r.description}</p>
+                    <span className="resource-card__cta">
+                      {r.cta} <Icon name="arrow-right" />
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ))}
       </div>
     </section>
   );

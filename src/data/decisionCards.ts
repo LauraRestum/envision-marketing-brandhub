@@ -4,7 +4,8 @@
 
 import { DecisionCard } from './types';
 
-export const decisionCards: DecisionCard[] = [
+/** Primary cards — shown large at the top */
+export const primaryCards: DecisionCard[] = [
   {
     id: 'decision-create',
     title: 'Create Something New',
@@ -15,15 +16,6 @@ export const decisionCards: DecisionCard[] = [
     keywords: ['create', 'new', 'design', 'make', 'build'],
   },
   {
-    id: 'decision-update',
-    title: 'Update or Reprint',
-    description: 'Revise, reorder, or refresh an existing asset, material, or webpage.',
-    icon: 'edit',
-    actionType: 'anchor',
-    anchorId: 'request-center',
-    keywords: ['update', 'revise', 'edit', 'change', 'refresh', 'reprint'],
-  },
-  {
     id: 'decision-find',
     title: 'Find a Resource',
     description: 'Looking for a logo, template, image, guideline, or brand file.',
@@ -32,6 +24,19 @@ export const decisionCards: DecisionCard[] = [
     anchorId: 'brand-resources',
     keywords: ['find', 'search', 'download', 'get', 'look for', 'where'],
   },
+  {
+    id: 'decision-update',
+    title: 'Update or Reprint',
+    description: 'Revise, reorder, or refresh an existing asset, material, or webpage.',
+    icon: 'edit',
+    actionType: 'anchor',
+    anchorId: 'request-center',
+    keywords: ['update', 'revise', 'edit', 'change', 'refresh', 'reprint'],
+  },
+];
+
+/** Secondary cards — shown smaller below */
+export const secondaryCards: DecisionCard[] = [
   {
     id: 'decision-share',
     title: 'Share a Story',
@@ -60,3 +65,6 @@ export const decisionCards: DecisionCard[] = [
     keywords: ['help', 'not sure', 'confused', 'question', 'guidance'],
   },
 ];
+
+/** All cards combined (for search indexing) */
+export const decisionCards: DecisionCard[] = [...primaryCards, ...secondaryCards];
