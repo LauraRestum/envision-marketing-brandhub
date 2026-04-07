@@ -78,8 +78,42 @@ interface Props {
   onMessagingAssistant: () => void;
 }
 
+const INTAKE_URL = 'https://envision-marketing-dashboard-jnqm.vercel.app/api/intake';
+
 export function SocialMediaHub({ onAction, onMessagingAssistant }: Props) {
   const [step, setStep] = useState<QuizStep>('start');
+  const [socialName, setSocialName] = useState('');
+  const [socialEmail, setSocialEmail] = useState('');
+  const [socialIdea, setSocialIdea] = useState('');
+  const [socialSubmitting, setSocialSubmitting] = useState(false);
+  const [socialSubmitted, setSocialSubmitted] = useState(false);
+  const [socialError, setSocialError] = useState('');
+
+  async function handleSocialSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setSocialSubmitting(true);
+    setSocialError('');
+
+    try {
+      const res = await fetch(INTAKE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'social_submission',
+          name: socialName,
+          email: socialEmail,
+          idea: socialIdea,
+        }),
+      });
+
+      if (!res.ok) throw new Error('Submission failed');
+      setSocialSubmitted(true);
+    } catch {
+      setSocialError('Something went wrong. Please try again.');
+    } finally {
+      setSocialSubmitting(false);
+    }
+  }
 
   function reset() {
     setStep('start');
@@ -319,7 +353,7 @@ export function SocialMediaHub({ onAction, onMessagingAssistant }: Props) {
               </div>
             )}
 
-            {/* Campaign post → email marketing */}
+            {/* Campaign post → dashboard intake */}
             {step === 'outcome-campaign' && (
               <div className="social-routing__outcome">
                 <div className="social-routing__outcome-badge social-routing__outcome-badge--contact">
@@ -329,19 +363,57 @@ export function SocialMediaHub({ onAction, onMessagingAssistant }: Props) {
                 <p className="social-routing__outcome-message">
                   Since this ties into an active campaign, reach out to marketing so we can coordinate. We're always open to collaboration — it may get folded into planned content, reworked for a specific platform, or take a different shape entirely. Either way, we want to hear about it!
                 </p>
-                <a
-                  className="social-routing__cta"
-                  href="mailto:marketing@envisionus.com?subject=Social%20Media%20Content%20Idea"
-                >
-                  Email the Marketing Team <Icon name="arrow-right" />
-                </a>
-                <button className="social-routing__restart" onClick={reset}>
-                  Start over
-                </button>
+                {socialSubmitted ? (
+                  <>
+                    <div className="social-routing__success">
+                      <Icon name="sparkle" />
+                      <p>Your submission was received. The Envision marketing team will follow up soon.</p>
+                    </div>
+                    <button className="social-routing__restart" onClick={reset}>
+                      Start over
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <form className="social-routing__form" onSubmit={handleSocialSubmit}>
+                      <input
+                        type="text"
+                        className="social-routing__input"
+                        placeholder="Your name"
+                        value={socialName}
+                        onChange={(e) => setSocialName(e.target.value)}
+                        required
+                      />
+                      <input
+                        type="email"
+                        className="social-routing__input"
+                        placeholder="Your email"
+                        value={socialEmail}
+                        onChange={(e) => setSocialEmail(e.target.value)}
+                        required
+                      />
+                      <textarea
+                        className="social-routing__textarea"
+                        placeholder="Describe your social media content idea..."
+                        value={socialIdea}
+                        onChange={(e) => setSocialIdea(e.target.value)}
+                        required
+                        rows={3}
+                      />
+                      {socialError && <p className="social-routing__error">{socialError}</p>}
+                      <button type="submit" className="social-routing__cta" disabled={socialSubmitting}>
+                        {socialSubmitting ? 'Submitting...' : 'Submit to Marketing Team'} <Icon name="arrow-right" />
+                      </button>
+                    </form>
+                    <button className="social-routing__restart" onClick={reset}>
+                      Start over
+                    </button>
+                  </>
+                )}
               </div>
             )}
 
-            {/* General collaborate → email marketing */}
+            {/* General collaborate → dashboard intake */}
             {step === 'outcome-collaborate' && (
               <div className="social-routing__outcome">
                 <div className="social-routing__outcome-badge social-routing__outcome-badge--contact">
@@ -351,15 +423,53 @@ export function SocialMediaHub({ onAction, onMessagingAssistant }: Props) {
                 <p className="social-routing__outcome-message">
                   Reach out to the marketing team and tell us what you have in mind. We can't guarantee it'll end up on an official page — we're very intentional about what goes where — but we're always open to collaboration and want to know what's happening across the organization.
                 </p>
-                <a
-                  className="social-routing__cta"
-                  href="mailto:marketing@envisionus.com?subject=Social%20Media%20Content%20Idea"
-                >
-                  Email the Marketing Team <Icon name="arrow-right" />
-                </a>
-                <button className="social-routing__restart" onClick={reset}>
-                  Start over
-                </button>
+                {socialSubmitted ? (
+                  <>
+                    <div className="social-routing__success">
+                      <Icon name="sparkle" />
+                      <p>Your submission was received. The Envision marketing team will follow up soon.</p>
+                    </div>
+                    <button className="social-routing__restart" onClick={reset}>
+                      Start over
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <form className="social-routing__form" onSubmit={handleSocialSubmit}>
+                      <input
+                        type="text"
+                        className="social-routing__input"
+                        placeholder="Your name"
+                        value={socialName}
+                        onChange={(e) => setSocialName(e.target.value)}
+                        required
+                      />
+                      <input
+                        type="email"
+                        className="social-routing__input"
+                        placeholder="Your email"
+                        value={socialEmail}
+                        onChange={(e) => setSocialEmail(e.target.value)}
+                        required
+                      />
+                      <textarea
+                        className="social-routing__textarea"
+                        placeholder="Tell us what you have in mind..."
+                        value={socialIdea}
+                        onChange={(e) => setSocialIdea(e.target.value)}
+                        required
+                        rows={3}
+                      />
+                      {socialError && <p className="social-routing__error">{socialError}</p>}
+                      <button type="submit" className="social-routing__cta" disabled={socialSubmitting}>
+                        {socialSubmitting ? 'Submitting...' : 'Submit to Marketing Team'} <Icon name="arrow-right" />
+                      </button>
+                    </form>
+                    <button className="social-routing__restart" onClick={reset}>
+                      Start over
+                    </button>
+                  </>
+                )}
               </div>
             )}
 

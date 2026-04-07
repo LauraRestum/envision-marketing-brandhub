@@ -42,7 +42,8 @@ function IntakeFlow({
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [currentValue, setCurrentValue] = useState('');
   const [submitted, setSubmitted] = useState(false);
-  const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const questions = definition.questions;
@@ -79,8 +80,32 @@ function IntakeFlow({
     setCurrentIndex((prev) => prev - 1);
   }
 
-  function handleSubmit() {
-    setSubmitted(true);
+  async function handleSubmit() {
+    setSubmitting(true);
+    setSubmitError('');
+
+    try {
+      const payload: Record<string, string> = { type: 'event_request' };
+      for (const q of questions) {
+        const answer = answers[q.id]?.trim();
+        if (answer) {
+          payload[q.fieldKey] = answer;
+        }
+      }
+
+      const res = await fetch('https://envision-marketing-dashboard-jnqm.vercel.app/api/intake', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error('Submission failed');
+      setSubmitted(true);
+    } catch {
+      setSubmitError('Something went wrong. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   function handleEditAnswer(index: number) {
@@ -89,84 +114,24 @@ function IntakeFlow({
     setCurrentIndex(index);
   }
 
-  function handleOpenForm() {
-    window.open(definition.embedUrl, '_blank', 'noopener');
-  }
 
-  function handleCopyField(fieldKey: string, value: string) {
-    navigator.clipboard.writeText(value).then(() => {
-      setCopiedField(fieldKey);
-      setTimeout(() => setCopiedField(null), 1500);
-    });
-  }
-
-  function handleCopyAll() {
-    const lines: string[] = [];
-    for (const q of questions) {
-      const answer = answers[q.id]?.trim();
-      if (answer) {
-        lines.push(`${q.fieldKey}: ${answer}`);
-      }
-    }
-    navigator.clipboard.writeText(lines.join('\n')).then(() => {
-      setCopiedField('__all__');
-      setTimeout(() => setCopiedField(null), 1500);
-    });
-  }
-
-  // ── Submitted: copy-paste panel + form link ──
+  // ── Submitted: success message ──
   if (submitted) {
-    const answeredQuestions = questions.filter((q) => answers[q.id]?.trim());
-
     return (
       <div className="intake">
         <div className="intake__header">
-          <button className="intake__back" onClick={() => setSubmitted(false)}>
-            <Icon name="arrow-right" /> Back to review
-          </button>
           <div>
             <h3 className="intake__title">{definition.title}</h3>
-            <p className="intake__subtitle">Copy your answers into the form</p>
+            <p className="intake__subtitle">Request submitted</p>
           </div>
         </div>
 
         <div className="intake__prefill-banner">
           <div className="intake__prefill-banner-text">
-            <p className="intake__prefill-headline">Your answers are ready</p>
-            <p className="intake__prefill-note">
-              Open the ClickUp form below, then copy each answer into the matching field. Upload any files directly on the form.
+            <p className="intake__prefill-headline">
+              <Icon name="sparkle" /> Your submission was received. The Envision marketing team will follow up soon.
             </p>
           </div>
-          <div className="intake__prefill-actions">
-            <button className="intake__submit-btn" onClick={handleOpenForm}>
-              Open ClickUp Form
-              <Icon name="arrow-right" />
-            </button>
-            <button className="intake__copy-all" onClick={handleCopyAll}>
-              {copiedField === '__all__' ? 'Copied!' : 'Copy All'}
-            </button>
-          </div>
-        </div>
-
-        <div className="intake__prefill-list">
-          {answeredQuestions.map((q) => {
-            const answer = answers[q.id]?.trim() ?? '';
-            const isCopied = copiedField === q.fieldKey;
-            return (
-              <div key={q.id} className="intake__prefill-item">
-                <div className="intake__prefill-header">
-                  <span className="intake__prefill-label">{q.fieldKey}</span>
-                  <button
-                    className={`intake__prefill-copy ${isCopied ? 'intake__prefill-copy--done' : ''}`}
-                    onClick={() => handleCopyField(q.fieldKey, answer)}
-                  >
-                    {isCopied ? 'Copied!' : 'Copy'}
-                  </button>
-                </div>
-                <p className="intake__prefill-value">{answer}</p>
-              </div>
-            );
-          })}
         </div>
 
         <div className="intake__submit-area">
@@ -243,10 +208,13 @@ function IntakeFlow({
               Fix the flagged answers above before submitting.
             </p>
           ) : (
-            <button className="intake__submit-btn" onClick={handleSubmit}>
-              Continue to ClickUp Form
-              <Icon name="arrow-right" />
-            </button>
+            <>
+              {submitError && <p className="intake__submit-error">{submitError}</p>}
+              <button className="intake__submit-btn" onClick={handleSubmit} disabled={submitting}>
+                {submitting ? 'Submitting...' : 'Submit Request'}
+                <Icon name="arrow-right" />
+              </button>
+            </>
           )}
         </div>
       </div>

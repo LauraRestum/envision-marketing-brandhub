@@ -29,7 +29,7 @@ const team: TeamMember[] = [
   },
 ];
 
-const MARKETING_EMAIL = 'marketing@envisionus.com';
+const INTAKE_URL = 'https://envision-marketing-dashboard-jnqm.vercel.app/api/intake';
 
 export function ContactPage({ onBack }: { onBack: () => void }) {
   const [name, setName] = useState('');
@@ -37,15 +37,34 @@ export function ContactPage({ onBack }: { onBack: () => void }) {
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    setSubmitting(true);
+    setError('');
 
-    const body = `From: ${name} (${email})%0D%0A%0D%0A${encodeURIComponent(message)}`;
-    const mailtoLink = `mailto:${MARKETING_EMAIL}?subject=${encodeURIComponent(subject)}&body=${body}`;
+    try {
+      const res = await fetch(INTAKE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'contact',
+          name,
+          email,
+          subject,
+          message,
+        }),
+      });
 
-    window.location.href = mailtoLink;
-    setSubmitted(true);
+      if (!res.ok) throw new Error('Submission failed');
+      setSubmitted(true);
+    } catch {
+      setError('Something went wrong. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -93,15 +112,13 @@ export function ContactPage({ onBack }: { onBack: () => void }) {
             <Icon name="mail" /> Send Us a Message
           </h2>
           <p className="contact-page__form-desc">
-            Fill out the form below and it will open in your email client, ready to send to the marketing team.
+            Fill out the form below to send a message to the marketing team.
           </p>
 
           {submitted ? (
             <div className="contact-page__success">
               <Icon name="sparkle" />
-              <p>Your email client should have opened with your message. If it didn't, you can email us directly at{' '}
-                <a href={`mailto:${MARKETING_EMAIL}`}>{MARKETING_EMAIL}</a>.
-              </p>
+              <p>Your submission was received. The Envision marketing team will follow up soon.</p>
             </div>
           ) : (
             <form className="contact-page__form" onSubmit={handleSubmit}>
@@ -154,8 +171,9 @@ export function ContactPage({ onBack }: { onBack: () => void }) {
                 />
               </label>
 
-              <button type="submit" className="contact-page__submit">
-                Open in Email Client
+              {error && <p className="contact-page__error">{error}</p>}
+              <button type="submit" className="contact-page__submit" disabled={submitting}>
+                {submitting ? 'Sending...' : 'Send Message'}
                 <Icon name="mail" />
               </button>
             </form>
