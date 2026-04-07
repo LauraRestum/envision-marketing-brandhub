@@ -47,9 +47,9 @@ export function StorySubmission() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type: 'story_submission',
-          name,
-          email,
-          story,
+          submitterName: name,
+          submitterEmail: email,
+          body: story,
         }),
       });
 

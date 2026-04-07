@@ -100,9 +100,9 @@ export function SocialMediaHub({ onAction, onMessagingAssistant }: Props) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type: 'social_submission',
-          name: socialName,
-          email: socialEmail,
-          idea: socialIdea,
+          submitterName: socialName,
+          submitterEmail: socialEmail,
+          body: socialIdea,
         }),
       });
 

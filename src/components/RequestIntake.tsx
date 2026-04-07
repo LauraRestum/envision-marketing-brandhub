@@ -85,13 +85,24 @@ function IntakeFlow({
     setSubmitError('');
 
     try {
-      const payload: Record<string, string> = { type: 'event_request' };
+      // Build a formatted body from all Q&A pairs
+      const bodyLines: string[] = [];
+      let requestorName = '';
       for (const q of questions) {
         const answer = answers[q.id]?.trim();
         if (answer) {
-          payload[q.fieldKey] = answer;
+          bodyLines.push(`${q.label}: ${answer}`);
+          if (q.fieldKey === 'Requestor Name') {
+            requestorName = answer;
+          }
         }
       }
+
+      const payload: Record<string, string> = {
+        type: 'event_request',
+        submitterName: requestorName || 'Anonymous',
+        body: bodyLines.join('\n'),
+      };
 
       const res = await fetch('https://envision-marketing-dashboard-jnqm.vercel.app/api/intake', {
         method: 'POST',

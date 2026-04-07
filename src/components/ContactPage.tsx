@@ -51,10 +51,10 @@ export function ContactPage({ onBack }: { onBack: () => void }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           type: 'contact',
-          name,
-          email,
+          submitterName: name,
+          submitterEmail: email,
           subject,
-          message,
+          body: message,
         }),
       });
 
