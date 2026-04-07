@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Icon } from './Icons';
+import { PillarTag } from './PillarTag';
+import type { PillarKey } from '@/data/pillars';
 import type { ActionType } from '@/data/types';
 
 /* ── Platform data ── */
@@ -15,6 +17,8 @@ interface Platform {
   embedUrl?: string;
   /** Hex color for the platform accent */
   color: string;
+  /** Which content pillars this platform is most relevant for */
+  pillars: PillarKey[];
 }
 
 const platforms: Platform[] = [
@@ -29,6 +33,7 @@ const platforms: Platform[] = [
     embedUrl:
       'https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1DzeJL9y4S%2F&tabs=timeline&width=340&height=500&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=false',
     color: '#1877F2',
+    pillars: ['community-outreach', 'rehabilitation-vision', 'employment-career'],
   },
   {
     id: 'linkedin',
@@ -39,6 +44,7 @@ const platforms: Platform[] = [
     usage: 'Thought leadership, company news, career opportunities',
     bestPractices: 'Professional but approachable. Focus on thought leadership, industry insights, and company achievements. This is where we build credibility.',
     color: '#0A66C2',
+    pillars: ['employment-career', 'research-innovation'],
   },
   {
     id: 'instagram',
@@ -49,6 +55,7 @@ const platforms: Platform[] = [
     usage: 'Behind-the-scenes, culture, short-form video, stories',
     bestPractices: 'Visual-first and authentic. Show the human side — behind-the-scenes, team culture, day-in-the-life. Keep captions conversational and use stories often.',
     color: '#E4405F',
+    pillars: ['community-outreach', 'rehabilitation-vision', 'products-services'],
   },
   {
     id: 'tiktok',
@@ -59,6 +66,7 @@ const platforms: Platform[] = [
     usage: 'Short-form video, trends, behind-the-scenes, culture',
     bestPractices: 'Fun, casual, and trend-aware. Quick videos that show personality. Don\'t overthink it — authenticity wins here. More personal, less corporate.',
     color: '#000000',
+    pillars: ['education-workforce', 'community-outreach'],
   },
 ];
 
@@ -188,6 +196,11 @@ export function SocialMediaHub({ onAction, onMessagingAssistant }: Props) {
                 <div className="social-feed-card__best-practices">
                   <span className="social-feed-card__bp-label">Best practices:</span>
                   <span className="social-feed-card__bp-text">{p.bestPractices}</span>
+                </div>
+                <div className="pillar-tags">
+                  {p.pillars.map((pk) => (
+                    <PillarTag key={pk} pillar={pk} />
+                  ))}
                 </div>
                 <a
                   className="social-feed-card__link"
