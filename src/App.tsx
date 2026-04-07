@@ -36,7 +36,7 @@ export default function App() {
       <div className="app">
         <Header onContactClick={() => setShowContact(true)} />
         <ContactPage onBack={() => { setShowContact(false); window.scrollTo(0, 0); }} />
-        <Footer />
+        <Footer onContactClick={() => setShowContact(true)} />
       </div>
     );
   }
@@ -84,7 +84,7 @@ export default function App() {
       {/* Story Submission — dedicated section, not a modal */}
       <StorySubmission />
 
-      <Footer />
+      <Footer onContactClick={() => setShowContact(true)} />
 
       {/* Modal for ClickUp forms */}
       <Modal modalKey={activeModal} onClose={() => setActiveModal(null)} />
@@ -99,12 +99,12 @@ export default function App() {
 
       {/* Logo Downloader overlay */}
       {showLogoDownloader && (
-        <LogoDownloader onClose={() => setShowLogoDownloader(false)} />
+        <LogoDownloader onClose={() => setShowLogoDownloader(false)} onContactClick={() => { setShowLogoDownloader(false); setShowContact(true); }} />
       )}
 
       {/* Letterhead Downloader overlay */}
       {showLetterheadDownloader && (
-        <LetterheadDownloader onClose={() => setShowLetterheadDownloader(false)} />
+        <LetterheadDownloader onClose={() => setShowLetterheadDownloader(false)} onContactClick={() => { setShowLetterheadDownloader(false); setShowContact(true); }} />
       )}
 
       {/* Messaging Assistant overlay */}
