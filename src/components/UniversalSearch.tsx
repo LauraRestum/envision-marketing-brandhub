@@ -38,9 +38,10 @@ function buildIndex(): SearchItem[] {
 
 interface Props {
   onAction: (target: { actionType: ActionType; href?: string; modalKey?: string; anchorId?: string }) => void;
+  onLogoDownloader?: () => void;
 }
 
-export function UniversalSearch({ onAction }: Props) {
+export function UniversalSearch({ onAction, onLogoDownloader }: Props) {
   const [query, setQuery] = useState('');
   const [focused, setFocused] = useState(false);
   const [imageryResult, setImageryResult] = useState<ImageryRouteResult | null>(null);
@@ -88,6 +89,13 @@ export function UniversalSearch({ onAction }: Props) {
   const showResults = focused && query.trim().length > 0;
 
   function handleSelectResult(item: SearchItem) {
+    if (item.id === 'logos-primary' && onLogoDownloader) {
+      onLogoDownloader();
+      setQuery('');
+      setFocused(false);
+      setImageryResult(null);
+      return;
+    }
     onAction(item);
     setQuery('');
     setFocused(false);

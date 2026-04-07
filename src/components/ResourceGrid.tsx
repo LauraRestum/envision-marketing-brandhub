@@ -5,9 +5,10 @@ import type { ActionType } from '@/data/types';
 interface Props {
   onAction: (target: { actionType: ActionType; href?: string; modalKey?: string; anchorId?: string }) => void;
   onMessagingAssistant?: () => void;
+  onLogoDownloader?: () => void;
 }
 
-export function ResourceGrid({ onAction, onMessagingAssistant }: Props) {
+export function ResourceGrid({ onAction, onMessagingAssistant, onLogoDownloader }: Props) {
   return (
     <section className="section" id="brand-resources">
       <div className="container">
@@ -39,7 +40,13 @@ export function ResourceGrid({ onAction, onMessagingAssistant }: Props) {
 
         <div className="resource-grid">
           {resources.map((r) => (
-            <div key={r.id} className="resource-card" onClick={() => onAction(r)} style={{ cursor: 'pointer' }}>
+            <div key={r.id} className="resource-card" onClick={() => {
+              if (r.id === 'logos-primary' && onLogoDownloader) {
+                onLogoDownloader();
+              } else {
+                onAction(r);
+              }
+            }} style={{ cursor: 'pointer' }}>
               <div className="resource-card__top">
                 <div className="resource-card__icon">
                   <Icon name={r.icon || 'document'} />
