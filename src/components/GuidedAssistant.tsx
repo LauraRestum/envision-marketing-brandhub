@@ -4,9 +4,10 @@ import type { ActionType } from '@/data/types';
 
 interface Props {
   onAction: (target: { actionType: ActionType; href?: string; modalKey?: string; anchorId?: string }) => void;
+  onHelpWizard?: () => void;
 }
 
-export function GuidedAssistant({ onAction }: Props) {
+export function GuidedAssistant({ onAction, onHelpWizard }: Props) {
   return (
     <section className="assistant" id="hero">
       <div className="assistant__inner">
@@ -24,7 +25,13 @@ export function GuidedAssistant({ onAction }: Props) {
             <button
               key={card.id}
               className="decision-card"
-              onClick={() => onAction(card)}
+              onClick={() => {
+                if (card.id === 'decision-help' && onHelpWizard) {
+                  onHelpWizard();
+                } else {
+                  onAction(card);
+                }
+              }}
             >
               <div className="decision-card__icon">
                 <Icon name={card.icon} />

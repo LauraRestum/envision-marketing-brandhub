@@ -2234,3 +2234,297 @@ img {
     padding: var(--space-6);
   }
 }
+
+/* ============================================================
+   HELP WIZARD — Interactive "Not Sure Where to Start" overlay
+   ============================================================ */
+
+.wizard-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(15, 30, 74, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  animation: wizard-fadeIn 200ms ease;
+}
+
+@keyframes wizard-fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes wizard-slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.wizard {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  width: 100%;
+  max-width: 580px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: wizard-slideUp 250ms ease;
+}
+
+/* Header */
+.wizard__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-5) var(--space-6);
+  border-bottom: 1px solid var(--border-light);
+  background: var(--gray-25);
+}
+
+.wizard__header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.wizard__icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--brand-navy), var(--brand-navy-mid));
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wizard__heading {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.wizard__close {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.wizard__close:hover {
+  background: var(--gray-100);
+  color: var(--text-primary);
+}
+
+/* Breadcrumbs */
+.wizard__breadcrumbs {
+  padding: var(--space-3) var(--space-6);
+  background: var(--gray-50);
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.wizard__crumb {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.wizard__crumb-sep {
+  color: var(--gray-300);
+  margin: 0 var(--space-1);
+}
+
+/* Body */
+.wizard__body {
+  padding: var(--space-6);
+  overflow-y: auto;
+  flex: 1;
+}
+
+.wizard__question {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-5);
+  line-height: var(--leading-tight);
+}
+
+.wizard__options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.wizard__option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+  text-align: left;
+  font-family: var(--font);
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.wizard__option:hover {
+  border-color: var(--brand-cyan);
+  background: var(--brand-cyan-bg);
+  box-shadow: 0 0 0 2px rgba(27, 174, 225, 0.10);
+}
+
+.wizard__option-label {
+  flex: 1;
+  line-height: var(--leading-normal);
+}
+
+.wizard__option-arrow {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+  transition: color var(--transition-fast);
+}
+
+.wizard__option:hover .wizard__option-arrow {
+  color: var(--brand-cyan);
+}
+
+/* Result */
+.wizard__result {
+  text-align: center;
+  padding: var(--space-4) 0;
+}
+
+.wizard__result-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
+  background: var(--brand-green-bg);
+  color: var(--brand-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-4);
+}
+
+.wizard__result-text {
+  font-size: var(--text-base);
+  color: var(--text-primary);
+  line-height: var(--leading-relaxed);
+  margin: 0 0 var(--space-6);
+  max-width: 420px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.wizard__result-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.wizard__result-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-5);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.wizard__result-btn--primary {
+  background: var(--brand-green);
+  color: var(--white);
+}
+
+.wizard__result-btn--primary:hover {
+  background: var(--brand-green-dark);
+}
+
+.wizard__result-btn--secondary {
+  background: var(--gray-100);
+  color: var(--text-secondary);
+}
+
+.wizard__result-btn--secondary:hover {
+  background: var(--gray-200);
+}
+
+/* Footer */
+.wizard__footer {
+  padding: var(--space-3) var(--space-6);
+  border-top: 1px solid var(--border-light);
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+}
+
+.wizard__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.wizard__back svg {
+  transform: rotate(180deg);
+}
+
+.wizard__back:hover {
+  background: var(--gray-100);
+  color: var(--text-primary);
+}
+
+@media (max-width: 480px) {
+  .wizard-overlay {
+    padding: var(--space-3);
+    align-items: flex-end;
+  }
+
+  .wizard {
+    max-height: 90vh;
+  }
+
+  .wizard__body {
+    padding: var(--space-4);
+  }
+}

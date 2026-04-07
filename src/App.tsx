@@ -12,11 +12,17 @@ import { StorySubmission } from '@/components/StorySubmission';
 import { Footer } from '@/components/Footer';
 import { Modal } from '@/components/Modal';
 import { ContactPage } from '@/components/ContactPage';
+import { HelpWizard } from '@/components/HelpWizard';
 
 export default function App() {
   const [activeModal, setActiveModal] = useState<string | null>(null);
   const [showContact, setShowContact] = useState(false);
+  const [showWizard, setShowWizard] = useState(false);
   const handleAction = useAction(setActiveModal);
+
+  function handleWizardNavigate(anchorId: string) {
+    document.getElementById(anchorId)?.scrollIntoView({ behavior: 'smooth' });
+  }
 
   if (showContact) {
     return (
@@ -46,7 +52,7 @@ export default function App() {
       </section>
 
       {/* Guided Needs Assistant */}
-      <GuidedAssistant onAction={handleAction} />
+      <GuidedAssistant onAction={handleAction} onHelpWizard={() => setShowWizard(true)} />
 
       {/* Quick Actions */}
       <QuickActions onAction={handleAction} />
@@ -72,6 +78,14 @@ export default function App() {
 
       {/* Modal for ClickUp forms */}
       <Modal modalKey={activeModal} onClose={() => setActiveModal(null)} />
+
+      {/* Help Wizard overlay */}
+      {showWizard && (
+        <HelpWizard
+          onClose={() => setShowWizard(false)}
+          onNavigate={handleWizardNavigate}
+        />
+      )}
     </div>
   );
 }
