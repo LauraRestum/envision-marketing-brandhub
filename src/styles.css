@@ -1665,6 +1665,118 @@ img {
   background: var(--brand-cyan-bg);
 }
 
+/* Prefill / copy-paste panel */
+.intake__prefill-banner {
+  background: var(--brand-navy);
+  color: var(--white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  margin-bottom: var(--space-6);
+}
+
+.intake__prefill-headline {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  margin-bottom: var(--space-1);
+}
+
+.intake__prefill-note {
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: var(--space-5);
+  line-height: 1.5;
+}
+
+.intake__prefill-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.intake__copy-all {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.15);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease);
+}
+
+.intake__copy-all:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.intake__prefill-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.intake__prefill-item {
+  background: var(--surface-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+
+.intake__prefill-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.intake__prefill-label {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--brand-navy);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.intake__prefill-copy {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--brand-cyan);
+  background: var(--brand-cyan-bg);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-sm);
+  transition: all var(--duration-fast) var(--ease);
+}
+
+.intake__prefill-copy:hover {
+  background: var(--brand-cyan);
+  color: var(--white);
+}
+
+.intake__prefill-copy--done {
+  background: var(--brand-green);
+  color: var(--white);
+}
+
+.intake__prefill-value {
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.intake__review-optional {
+  font-weight: 400;
+  color: var(--text-tertiary);
+  font-size: var(--text-xs);
+}
+
+.intake__label-optional {
+  font-weight: 400;
+  color: var(--text-tertiary);
+  font-size: var(--text-sm);
+}
+
 @media (max-width: 768px) {
   .intake {
     padding: var(--space-6);

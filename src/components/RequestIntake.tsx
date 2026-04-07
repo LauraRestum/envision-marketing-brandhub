@@ -42,6 +42,7 @@ function IntakeFlow({
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [currentValue, setCurrentValue] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const questions = definition.questions;
@@ -56,10 +57,6 @@ function IntakeFlow({
 
   function handleNext() {
     if (!currentQ) return;
-    const quality = assessAnswer(currentQ, currentValue);
-    if (quality.tier === 'vague' && currentValue.trim().length > 0) {
-      // Allow them to proceed even if vague — but they see the warning
-    }
     setAnswers((prev) => ({ ...prev, [currentQ.id]: currentValue }));
     setCurrentValue('');
     setCurrentIndex((prev) => prev + 1);
@@ -83,22 +80,6 @@ function IntakeFlow({
   }
 
   function handleSubmit() {
-    // Build ClickUp form URL with pre-filled values from intake answers
-    const params = new URLSearchParams();
-    for (const q of definition.questions) {
-      const answer = answers[q.id]?.trim();
-      if (answer) {
-        params.set(q.fieldKey, answer);
-      }
-    }
-    // Add flow context as additional pre-fill
-    if (flowContext.intent) {
-      params.set('request_type', flowContext.intent);
-    }
-
-    const separator = definition.embedUrl.includes('?') ? '&' : '?';
-    const prefillUrl = `${definition.embedUrl}${separator}${params.toString()}`;
-    window.open(prefillUrl, '_blank', 'noopener');
     setSubmitted(true);
   }
 
@@ -108,20 +89,89 @@ function IntakeFlow({
     setCurrentIndex(index);
   }
 
-  // ── Submitted confirmation ──
+  function handleOpenForm() {
+    window.open(definition.embedUrl, '_blank', 'noopener');
+  }
+
+  function handleCopyField(fieldKey: string, value: string) {
+    navigator.clipboard.writeText(value).then(() => {
+      setCopiedField(fieldKey);
+      setTimeout(() => setCopiedField(null), 1500);
+    });
+  }
+
+  function handleCopyAll() {
+    const lines: string[] = [];
+    for (const q of questions) {
+      const answer = answers[q.id]?.trim();
+      if (answer) {
+        lines.push(`${q.fieldKey}: ${answer}`);
+      }
+    }
+    navigator.clipboard.writeText(lines.join('\n')).then(() => {
+      setCopiedField('__all__');
+      setTimeout(() => setCopiedField(null), 1500);
+    });
+  }
+
+  // ── Submitted: copy-paste panel + form link ──
   if (submitted) {
+    const answeredQuestions = questions.filter((q) => answers[q.id]?.trim());
+
     return (
       <div className="intake">
-        <div className="intake__done">
-          <div className="intake__done-icon">
-            <Icon name="sparkle" />
+        <div className="intake__header">
+          <button className="intake__back" onClick={() => setSubmitted(false)}>
+            <Icon name="arrow-right" /> Back to review
+          </button>
+          <div>
+            <h3 className="intake__title">{definition.title}</h3>
+            <p className="intake__subtitle">Copy your answers into the form</p>
           </div>
-          <h3 className="intake__done-title">Almost done!</h3>
-          <p className="intake__done-text">
-            Your answers have been pre-filled into the ClickUp form. Upload any files and submit the form to complete your request. The team will review and follow up within 1–2 business days.
-          </p>
+        </div>
+
+        <div className="intake__prefill-banner">
+          <div className="intake__prefill-banner-text">
+            <p className="intake__prefill-headline">Your answers are ready</p>
+            <p className="intake__prefill-note">
+              Open the ClickUp form below, then copy each answer into the matching field. Upload any files directly on the form.
+            </p>
+          </div>
+          <div className="intake__prefill-actions">
+            <button className="intake__submit-btn" onClick={handleOpenForm}>
+              Open ClickUp Form
+              <Icon name="arrow-right" />
+            </button>
+            <button className="intake__copy-all" onClick={handleCopyAll}>
+              {copiedField === '__all__' ? 'Copied!' : 'Copy All'}
+            </button>
+          </div>
+        </div>
+
+        <div className="intake__prefill-list">
+          {answeredQuestions.map((q) => {
+            const answer = answers[q.id]?.trim() ?? '';
+            const isCopied = copiedField === q.fieldKey;
+            return (
+              <div key={q.id} className="intake__prefill-item">
+                <div className="intake__prefill-header">
+                  <span className="intake__prefill-label">{q.fieldKey}</span>
+                  <button
+                    className={`intake__prefill-copy ${isCopied ? 'intake__prefill-copy--done' : ''}`}
+                    onClick={() => handleCopyField(q.fieldKey, answer)}
+                  >
+                    {isCopied ? 'Copied!' : 'Copy'}
+                  </button>
+                </div>
+                <p className="intake__prefill-value">{answer}</p>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="intake__submit-area">
           <button className="intake__done-btn" onClick={onClose}>
-            Back to Hub
+            Done — Back to Hub
           </button>
         </div>
       </div>
@@ -150,16 +200,24 @@ function IntakeFlow({
         <div className="intake__review">
           {questions.map((q, i) => {
             const answer = answers[q.id] ?? '';
-            const quality = assessAnswer(q, answer);
+            const isOptionalEmpty = q.optional && !answer.trim();
+            const quality = isOptionalEmpty
+              ? { tier: 'good' as QualityTier, feedback: '' }
+              : assessAnswer(q, answer);
             const config = TIER_CONFIG[quality.tier];
             return (
               <div key={q.id} className="intake__review-item">
                 <div className="intake__review-header">
-                  <span className="intake__review-label">{q.label}</span>
+                  <span className="intake__review-label">
+                    {q.label}
+                    {q.optional && <span className="intake__review-optional"> (optional)</span>}
+                  </span>
                   <div className="intake__review-actions">
-                    <span className={`intake__quality-dot ${config.className}`}>
-                      <Icon name={config.icon} size={12} />
-                    </span>
+                    {!isOptionalEmpty && (
+                      <span className={`intake__quality-dot ${config.className}`}>
+                        <Icon name={config.icon} size={12} />
+                      </span>
+                    )}
                     <button
                       className="intake__review-edit"
                       onClick={() => handleEditAnswer(i)}
@@ -168,8 +226,10 @@ function IntakeFlow({
                     </button>
                   </div>
                 </div>
-                <p className="intake__review-answer">{answer || '(empty)'}</p>
-                {quality.tier === 'vague' && (
+                <p className="intake__review-answer">
+                  {answer || (q.optional ? '(skipped)' : '(empty)')}
+                </p>
+                {quality.tier === 'vague' && !isOptionalEmpty && (
                   <p className="intake__review-warning">{quality.feedback}</p>
                 )}
               </div>
@@ -184,7 +244,7 @@ function IntakeFlow({
             </p>
           ) : (
             <button className="intake__submit-btn" onClick={handleSubmit}>
-              Submit Request
+              Continue to ClickUp Form
               <Icon name="arrow-right" />
             </button>
           )}
@@ -217,7 +277,10 @@ function IntakeFlow({
       </div>
 
       <div className="intake__question-area">
-        <label className="intake__label">{currentQ.label}</label>
+        <label className="intake__label">
+          {currentQ.label}
+          {currentQ.optional && <span className="intake__label-optional"> (optional)</span>}
+        </label>
 
         {currentQ.hints && (
           <div className="intake__hints">
@@ -249,7 +312,7 @@ function IntakeFlow({
               placeholder={currentQ.placeholder}
               rows={3}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey && currentValue.trim()) {
+                if (e.key === 'Enter' && !e.shiftKey && (currentValue.trim() || currentQ.optional)) {
                   e.preventDefault();
                   handleNext();
                 }
