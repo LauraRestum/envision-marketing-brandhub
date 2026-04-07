@@ -51,7 +51,7 @@ export const quickLinks: QuickLink[] = [
     id: 'quick-story',
     title: 'Share a Story',
     icon: 'star',
-    actionType: 'email',
-    href: 'mailto:marketing@envisionus.com?subject=Story%20Submission',
+    actionType: 'anchor',
+    anchorId: 'story-submission',
   },
 ];

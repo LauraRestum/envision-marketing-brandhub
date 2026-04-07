@@ -5,8 +5,8 @@
 // in the modal. The modalKey must match a key in the formRegistry
 // inside src/components/Modal.tsx.
 //
-// STORY SUBMISSION: Uses actionType 'email' and routes to
-// marketing@envisionus.com via mailto link.
+// STORY SUBMISSION: Uses actionType 'anchor' to scroll to
+// the inline StorySubmission form section.
 // ============================================================
 
 import { RequestForm } from './types';
@@ -62,8 +62,8 @@ export const requestForms: RequestForm[] = [
     description: 'Submit a story, achievement, or milestone for potential feature across Envision communications.',
     helperText: 'Email our team with your story details. We review all submissions and follow up within a few business days.',
     icon: 'star',
-    actionType: 'email',
-    href: 'mailto:marketing@envisionus.com?subject=Story%20Submission&body=Hi%20Marketing%20Team%2C%0A%0AI%20have%20a%20story%20to%20share%3A%0A%0A',
+    actionType: 'anchor',
+    anchorId: 'story-submission',
     keywords: ['story', 'news', 'achievement', 'milestone', 'feature', 'spotlight', 'recognition', 'press'],
   },
   {

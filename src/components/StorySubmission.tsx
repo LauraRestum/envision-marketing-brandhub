@@ -63,7 +63,7 @@ export function StorySubmission() {
   }
 
   return (
-    <section className="story-section">
+    <section id="story-submission" className="story-section">
       <div className="story__inner">
         <div className="story__content">
           <div className="story__eyebrow">Share Your Story</div>
