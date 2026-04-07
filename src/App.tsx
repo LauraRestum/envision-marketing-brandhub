@@ -74,7 +74,7 @@ export default function App() {
         <RequestFlow />
 
         {/* Social Media Hub — platform links + content routing */}
-        <SocialMediaHub />
+        <SocialMediaHub onAction={handleAction} onMessagingAssistant={() => setShowMessaging(true)} />
       </main>
 
       {/* Story Submission — dedicated section, not a modal */}
