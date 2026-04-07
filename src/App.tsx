@@ -15,12 +15,14 @@ import { Modal } from '@/components/Modal';
 import { ContactPage } from '@/components/ContactPage';
 import { HelpWizard } from '@/components/HelpWizard';
 import { MessagingAssistant } from '@/components/MessagingAssistant';
+import { LogoDownloader } from '@/components/LogoDownloader';
 
 export default function App() {
   const [activeModal, setActiveModal] = useState<string | null>(null);
   const [showContact, setShowContact] = useState(false);
   const [showWizard, setShowWizard] = useState(false);
   const [showMessaging, setShowMessaging] = useState(false);
+  const [showLogoDownloader, setShowLogoDownloader] = useState(false);
   const handleAction = useAction(setActiveModal);
 
   function handleWizardNavigate(anchorId: string) {
@@ -50,7 +52,7 @@ export default function App() {
           <p className="hero__subtitle">
             Find brand assets, download templates, submit requests, or share a story — all in one place.
           </p>
-          <UniversalSearch onAction={handleAction} />
+          <UniversalSearch onAction={handleAction} onLogoDownloader={() => setShowLogoDownloader(true)} />
         </div>
       </section>
 
@@ -65,7 +67,7 @@ export default function App() {
 
       <main className="main">
         {/* Brand Resources */}
-        <ResourceGrid onAction={handleAction} onMessagingAssistant={() => setShowMessaging(true)} />
+        <ResourceGrid onAction={handleAction} onMessagingAssistant={() => setShowMessaging(true)} onLogoDownloader={() => setShowLogoDownloader(true)} />
 
         {/* Templates */}
         <TemplateGrid onAction={handleAction} />
@@ -91,6 +93,11 @@ export default function App() {
           onClose={() => setShowWizard(false)}
           onNavigate={handleWizardNavigate}
         />
+      )}
+
+      {/* Logo Downloader overlay */}
+      {showLogoDownloader && (
+        <LogoDownloader onClose={() => setShowLogoDownloader(false)} />
       )}
 
       {/* Messaging Assistant overlay */}

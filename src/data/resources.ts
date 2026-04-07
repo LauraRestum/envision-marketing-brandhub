@@ -11,14 +11,14 @@ export const resources: Resource[] = [
   {
     id: 'logos-primary',
     title: 'Primary Logo Suite',
-    description: 'Official Envision logo files in all formats (PNG, SVG, EPS). Includes full color, white, and black versions.',
+    description: 'Official Envision logo files in all formats (PNG, JPG, EPS, AI). Includes full color, white, black, and vertical versions plus social profile images.',
     category: 'brand',
     type: 'Logo',
     tag: 'Essential',
     cta: 'Download Logos',
-    actionType: 'anchor',
-    anchorId: 'request-center',
-    keywords: ['logo', 'logomark', 'wordmark', 'brand mark', 'envision logo', 'primary logo'],
+    actionType: 'internal',
+    href: '#logo-downloader',
+    keywords: ['logo', 'logomark', 'wordmark', 'brand mark', 'envision logo', 'primary logo', 'download', 'eps', 'vector', 'png', 'ai', 'profile picture', 'social profile'],
     icon: 'logo',
   },
   {
