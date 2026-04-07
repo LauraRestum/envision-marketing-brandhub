@@ -77,7 +77,7 @@ const OUTCOMES: Record<string, Outcome> = {
   contact: {
     title: 'Let us know about it',
     message:
-      'Since this may tie into an existing campaign, reach out to the marketing team so we can figure out how it fits. This doesn\'t mean we\'ll post it on an official page — our accounts follow strict content guidelines — but we want to hear about it so we can potentially work it into our strategy.',
+      'Since this may tie into an existing campaign, reach out to the marketing team so we can figure out how it fits. We\'re always open to collaboration — it may end up as part of a larger campaign, get reworked for a specific platform, or take a different shape entirely. Either way, we want to hear about it!',
     icon: 'message',
     type: 'contact',
   },
@@ -191,7 +191,7 @@ export function SocialMediaHub() {
             <div>
               <h3 className="social-routing__title">Want to post something on social media?</h3>
               <p className="social-routing__desc">
-                This quick quiz will help guide you through whether content is best shared on an official Envision page or on your personal page. In most cases, your personal page is the way to go — our official accounts follow pretty specific guidelines and are tied to planned campaigns.
+                This quick quiz will help guide you through whether content is best shared on an official Envision page or on your personal page. We're extremely intentional and strategic about what goes on each platform and the audiences they reach — so in most cases, your personal page is the way to go. That said, we're always open to collaboration!
               </p>
             </div>
           </div>
