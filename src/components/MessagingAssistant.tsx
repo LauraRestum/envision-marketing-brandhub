@@ -484,7 +484,7 @@ export function MessagingAssistant({ onClose }: { onClose: () => void }) {
           <div className="msg__header-left">
             <div className="msg__header-icon"><Icon name="sparkle" /></div>
             <div>
-              <div className="msg__header-title">Messaging Assistant</div>
+              <div className="msg__header-title">Messaging Assistant - Coming Soon</div>
               <div className="msg__header-sub">AI-powered, brand-approved content</div>
             </div>
           </div>
