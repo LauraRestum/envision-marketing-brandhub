@@ -49,10 +49,10 @@ export default function App() {
       <section className="hero">
         <div className="hero__glow" />
         <div className="hero__inner">
-          <p className="hero__welcome">Envision Brand & Marketing</p>
-          <h1 className="hero__title">How can we help?</h1>
+          <p className="hero__welcome">Your Strategic Marketing Partner</p>
+          <h1 className="hero__title">What do you need?</h1>
           <p className="hero__subtitle">
-            Find brand assets, download templates, submit requests, or share a story — all in one place.
+            From brand strategy to creative execution, we're here to elevate your vision — let's build something great together.
           </p>
           <UniversalSearch onAction={handleAction} onLogoDownloader={() => setShowLogoDownloader(true)} onLetterheadDownloader={() => setShowLetterheadDownloader(true)} />
         </div>
