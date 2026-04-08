@@ -1,6 +1,10 @@
+import { useState } from 'react';
 import { Icon } from './Icons';
 import { resources } from '@/data/resources';
 import type { ActionType } from '@/data/types';
+import { ColorPalettePanel } from './ColorPalettePanel';
+import { TypographyPanel } from './TypographyPanel';
+import { BoilerplateDownloader } from './BoilerplateDownloader';
 
 interface Props {
   onAction: (target: { actionType: ActionType; href?: string; modalKey?: string; anchorId?: string }) => void;
@@ -11,19 +15,30 @@ interface Props {
 
 const buckets = [
   {
-    label: 'Logos & Visual Identity',
-    description: 'Official logos, imagery, and color palette',
-    ids: ['logos-primary', 'logos-subbrands', 'brand-imagery', 'brand-colors'],
-  },
-  {
-    label: 'Guidelines & Messaging',
-    description: 'Brand standards, approved copy, and boilerplate language',
-    ids: ['brand-book', 'brand-messaging', 'brand-typography', 'brand-boilerplate'],
+    label: 'Brand Identity & Guidelines',
+    description: 'Official logos, imagery, colors, typography, and approved messaging',
+    ids: ['logos-primary', 'brand-imagery', 'brand-colors', 'brand-typography', 'brand-messaging', 'brand-boilerplate'],
   },
 ];
 
 export function ResourceGrid({ onAction, onMessagingAssistant, onLogoDownloader, onLetterheadDownloader }: Props) {
   const resourceMap = Object.fromEntries(resources.map((r) => [r.id, r]));
+  const [activePanel, setActivePanel] = useState<string | null>(null);
+
+  function handleCardClick(id: string) {
+    if (id === 'logos-primary' && onLogoDownloader) {
+      onLogoDownloader();
+    } else if (id === 'brand-colors') {
+      setActivePanel('colors');
+    } else if (id === 'brand-typography') {
+      setActivePanel('typography');
+    } else if (id === 'brand-boilerplate') {
+      setActivePanel('boilerplate');
+    } else {
+      const r = resourceMap[id];
+      if (r) onAction(r);
+    }
+  }
 
   return (
     <section className="section" id="brand-resources">
@@ -65,13 +80,7 @@ export function ResourceGrid({ onAction, onMessagingAssistant, onLogoDownloader,
                 const r = resourceMap[id];
                 if (!r) return null;
                 return (
-                  <div key={r.id} className="resource-card" onClick={() => {
-                    if (r.id === 'logos-primary' && onLogoDownloader) {
-                      onLogoDownloader();
-                    } else {
-                      onAction(r);
-                    }
-                  }} style={{ cursor: 'pointer' }}>
+                  <div key={r.id} className="resource-card" onClick={() => handleCardClick(r.id)} style={{ cursor: 'pointer' }}>
                     <div className="resource-card__top">
                       <div className="resource-card__icon">
                         <Icon name={r.icon || 'document'} />
@@ -95,6 +104,11 @@ export function ResourceGrid({ onAction, onMessagingAssistant, onLogoDownloader,
           </div>
         ))}
       </div>
+
+      {/* Panel overlays */}
+      {activePanel === 'colors' && <ColorPalettePanel onClose={() => setActivePanel(null)} />}
+      {activePanel === 'typography' && <TypographyPanel onClose={() => setActivePanel(null)} />}
+      {activePanel === 'boilerplate' && <BoilerplateDownloader onClose={() => setActivePanel(null)} />}
     </section>
   );
 }
