@@ -21,36 +21,71 @@ interface ComposeState {
 }
 
 const audiences = [
-  'General / External',
-  'Donors & Partners',
+  'Vision Rehab Client',
+  'BVI Adult',
+  'BVI Youth (TVIs & VR Counselors)',
+  'Family Member or Caregiver',
+  'Referring Professional',
+  'Continuing Education Professional',
+  'Enterprise Buyer',
+  'Military Community',
+  'Arts Community',
+  'Research & Academic Community',
+  'Donor or Community Partner',
+  'Employee or Job Seeker',
   'Staff / Internal Team',
-  'Patients & Families',
-  'Community / Public',
   'Media / Press',
-  'Leadership / Board',
+  'General / External',
 ];
 
 // ── Helpers ──
 
 function buildDraft(topic: CopyBlock, audience: string, platform: PlatformFormat): string {
   // Build a draft by fitting the approved copy into the platform template
-  // and tailoring the framing to the audience
+  // and tailoring the framing to the audience per brand directive
   let audienceOpener = '';
   switch (audience) {
-    case 'Donors & Partners':
-      audienceOpener = 'We\'re grateful for the support that makes this work possible. ';
+    case 'Vision Rehab Client':
+      audienceOpener = 'The right tools and training make all the difference. ';
+      break;
+    case 'BVI Adult':
+      audienceOpener = '';
+      break;
+    case 'BVI Youth (TVIs & VR Counselors)':
+      audienceOpener = '';
+      break;
+    case 'Family Member or Caregiver':
+      audienceOpener = 'Here is what you need to know and what comes next. ';
+      break;
+    case 'Referring Professional':
+      audienceOpener = '';
+      break;
+    case 'Continuing Education Professional':
+      audienceOpener = '';
+      break;
+    case 'Enterprise Buyer':
+      audienceOpener = '';
+      break;
+    case 'Military Community':
+      audienceOpener = '';
+      break;
+    case 'Arts Community':
+      audienceOpener = '';
+      break;
+    case 'Research & Academic Community':
+      audienceOpener = '';
+      break;
+    case 'Donor or Community Partner':
+      audienceOpener = 'Your support makes this work possible. ';
+      break;
+    case 'Employee or Job Seeker':
+      audienceOpener = '';
       break;
     case 'Staff / Internal Team':
-      audienceOpener = 'Team — wanted to share an update. ';
-      break;
-    case 'Patients & Families':
-      audienceOpener = 'At Envision, we\'re here to help every step of the way. ';
+      audienceOpener = 'Team, wanted to share an update. ';
       break;
     case 'Media / Press':
       audienceOpener = '';
-      break;
-    case 'Leadership / Board':
-      audienceOpener = 'For your awareness — ';
       break;
     default:
       audienceOpener = '';
@@ -59,30 +94,39 @@ function buildDraft(topic: CopyBlock, audience: string, platform: PlatformFormat
   const copy = topic.content;
 
   if (platform.id === 'linkedin') {
-    return `${audienceOpener}${copy}\n\nAt Envision, we believe vision loss is not a barrier to independence, success, and fulfillment.\n\nLearn more at envisionus.com\n\n#Envision #EmpoweringPotential`;
+    return `${audienceOpener}${copy}\n\nPeople who are blind or low vision thrive with the right tools, support, and opportunities.\n\nLearn more at envisionus.com\n\n#Envision #EmpoweringPotential`;
   }
   if (platform.id === 'linkedin-reshare') {
-    return `${audienceOpener}Proud to be part of the work happening at @Envision Inc.\n\n${copy}\n\n#Envision #EmpoweringPotential`;
+    return `${audienceOpener}Proud to be part of the work at @Envision Inc.\n\n${copy}\n\n#Envision #EmpoweringPotential`;
   }
   if (platform.id === 'email-internal') {
-    return `Hi Team,\n\n${audienceOpener}${copy}\n\nPlease don't hesitate to reach out if you have questions.\n\nThank you,\n[Your Name]`;
+    return `Hi Team,\n\n${audienceOpener}${copy}\n\nReach out if you have questions.\n\nThank you,\n[Your Name]`;
   }
   if (platform.id === 'email-external') {
-    return `Dear [Name],\n\n${audienceOpener}${copy}\n\nWe'd love to connect further — please don't hesitate to reach out.\n\nWarm regards,\n[Your Name]\n[Your Title]\nEnvision | envisionus.com`;
+    return `Dear [Name],\n\n${audienceOpener}${copy}\n\nWe would love to connect further. Please reach out any time.\n\nWarm regards,\n[Your Name]\n[Your Title]\nEnvision | envisionus.com`;
   }
   if (platform.id === 'social-short') {
-    // Trim to fit short-form
     const short = copy.length > 220 ? copy.slice(0, 217) + '...' : copy;
     return `${short}\n\n#Envision #EmpoweringPotential`;
   }
   if (platform.id === 'newsletter') {
-    return `**${topic.title}**\n\n${audienceOpener}${copy}\n\n→ Learn more at envisionus.com`;
+    return `**${topic.title}**\n\n${audienceOpener}${copy}\n\nLearn more at envisionus.com`;
   }
   if (platform.id === 'presentation') {
-    // Break into bullet-ish points
     const sentences = copy.split(/\.\s+/).filter(Boolean);
-    const bullets = sentences.map((s) => `• ${s.trim().replace(/\.$/, '')}`).join('\n');
+    const bullets = sentences.map((s) => `- ${s.trim().replace(/\.$/, '')}`).join('\n');
     return `${topic.title}\n\n${bullets}`;
+  }
+  if (platform.id === 'press-release') {
+    return `[HEADLINE]\n\n${copy}\n\n"[Quote from named Envision leader]," said [Name], [Title] at Envision.\n\n###\n\nAbout Envision: Envision is a nonprofit social enterprise that improves the quality of life for people who are blind or low vision (BVI). Based in Wichita, Kansas, Envision provides employment, outreach, rehabilitation, education, and research so people can thrive. Learn more at envisionus.com.`;
+  }
+  if (platform.id === 'donor-communication') {
+    return `${audienceOpener}${copy}\n\nWith your partnership, people who are blind or low vision continue to thrive.\n\n[Call to action]`;
+  }
+  if (platform.id === 'sales-asset') {
+    const sentences = copy.split(/\.\s+/).filter(Boolean);
+    const bullets = sentences.map((s) => `- ${s.trim().replace(/\.$/, '')}`).join('\n');
+    return `${topic.title}\n\n${bullets}\n\n[Supporting certifications, compliance credentials, and delivery metrics]`;
   }
 
   return `${audienceOpener}${copy}`;
@@ -93,69 +137,196 @@ function checkBrandCompliance(text: string): { issues: string[]; passed: string[
   const passed: string[] = [];
   const lower = text.toLowerCase();
 
-  // People-first language checks
+  // ── People-first language ──
+
   if (/\bthe blind\b/i.test(text)) {
-    issues.push('Avoid "the blind" — use "people who are blind" (people-first language).');
-  } else {
-    passed.push('People-first language looks good.');
+    issues.push('Never use "the blind" as a noun. Use "people who are blind or low vision."');
   }
 
   if (/\bthe disabled\b/i.test(text)) {
-    issues.push('Avoid "the disabled" — use "people with disabilities."');
+    issues.push('Never use "the disabled." Use "people with disabilities."');
   }
 
   if (/\bblind people\b/i.test(text) && !/people who are blind/i.test(text)) {
-    issues.push('Consider "people who are blind" instead of "blind people" (people-first language).');
+    issues.push('Use person-first language: "people who are blind" instead of "blind people."');
   }
 
   if (/\bvisually impaired people\b/i.test(text)) {
-    issues.push('Consider "people who are visually impaired" instead of "visually impaired people."');
+    issues.push('Use person-first language: "people who are visually impaired" instead of "visually impaired people."');
   }
 
-  // Pity language
-  const pityTerms = ['suffers from', 'suffering from', 'afflicted', 'confined to', 'victim of', 'stricken'];
+  const hasPeopleFirst = /people who are blind/i.test(text) || /people who are .* vision/i.test(text) || /\bBVI\b/.test(text);
+  if (hasPeopleFirst && !issues.some((i) => i.includes('person-first') || i.includes('the blind'))) {
+    passed.push('Person-first language detected.');
+  }
+
+  // ── "Visually impaired" used alone (not as part of person-first phrasing) ──
+
+  if (/\bvisually impaired\b/i.test(text) && !/people who are (blind or )?visually impaired/i.test(text)) {
+    issues.push('Use "people who are blind or low vision" instead of "visually impaired" alone.');
+  }
+
+  // ── "Normal vision" ──
+
+  if (/\bnormal vision\b/i.test(text)) {
+    issues.push('Never use "normal vision." Use "sighted" or "typical vision."');
+  }
+
+  // ── Deficit and pity language ──
+
+  const pityTerms = ['suffers from', 'suffering from', 'afflicted', 'confined to', 'victim of', 'stricken', 'wheelchair-bound', 'confined to a wheelchair'];
   const foundPity = pityTerms.filter((term) => lower.includes(term));
   if (foundPity.length > 0) {
-    issues.push(`Remove pity language: "${foundPity.join('", "')}" — use empowering, neutral language instead.`);
+    issues.push(`Remove deficit/pity language: "${foundPity.join('", "')}." Use neutral, empowering language.`);
   } else {
-    passed.push('No pity language detected.');
+    passed.push('No deficit or pity language detected.');
   }
 
-  // "Special needs"
+  // ── "Despite vision loss" / "despite [condition]" ──
+
+  if (/\bdespite\b.*\b(vision|blind|sight|disability|condition|loss)\b/i.test(text)) {
+    issues.push('Never use "despite vision loss" or "despite [condition]." Reframe around capability: "with the right tools and support."');
+  }
+
+  // ── "Special needs" ──
+
   if (lower.includes('special needs')) {
-    issues.push('Avoid "special needs" — use "people with disabilities" or be specific about the disability.');
+    issues.push('Never use "special needs." Use specific, person-first language.');
   }
 
-  // Active voice check (basic passive detection)
-  if (/\b(was|were|is|are|been) (being )?\w+ed\b/i.test(text) && text.length > 100) {
-    passed.push('Consider reviewing for passive voice — active voice is preferred.');
+  // ── "Seeing eye dog" ──
+
+  if (/\bseeing eye dog\b/i.test(text)) {
+    issues.push('Use "guide dog" instead of "seeing eye dog."');
   }
 
-  // Abbreviation check
+  // ── Retired terms ──
+
+  if (/\benvision xpress\b/i.test(text)) {
+    issues.push('"Envision Xpress" is retired. Always use "Envision Base Supply Center."');
+  }
+
+  // ── "All abilities" in ECDC context ──
+
+  if (lower.includes('all abilities')) {
+    issues.push('Never use "all abilities" in reference to ECDC. It overstates the scope of abilities served.');
+  }
+
+  // ── "Forward-thinking" ──
+
+  if (/\bforward-thinking\b/i.test(text) || /\bforward thinking\b/i.test(text)) {
+    issues.push('Use "future-ready" instead of "forward-thinking."');
+  }
+
+  // ── Em dashes ──
+
+  if (text.includes('\u2014') || text.includes(' — ') || / —|— /.test(text)) {
+    issues.push('Remove em dashes. Use commas, periods, or colons instead.');
+  }
+
+  // ── Word swaps: optimize, utilize, initiate ──
+
+  if (/\boptimize\b/i.test(text) || /\boptimizing\b/i.test(text) || /\boptimized\b/i.test(text)) {
+    issues.push('Use "improve" instead of "optimize."');
+  }
+  if (/\butilize\b/i.test(text) || /\butilizing\b/i.test(text) || /\butilized\b/i.test(text)) {
+    issues.push('Use "use" instead of "utilize."');
+  }
+  if (/\binitiate\b/i.test(text) || /\binitiating\b/i.test(text) || /\binitiated\b/i.test(text)) {
+    issues.push('Use "start" instead of "initiate."');
+  }
+
+  // ── AI-sounding phrasing ──
+
+  const aiPhrases = ['delve', 'it\'s worth noting', 'in conclusion', 'i\'d be happy to', 'certainly,', 'absolutely,', 'leverage'];
+  const foundAi = aiPhrases.filter((term) => lower.includes(term));
+  if (foundAi.length > 0) {
+    issues.push(`Remove AI-sounding phrasing: "${foundAi.join('", "')}." Use natural, direct language.`);
+  }
+
+  // ── Paternalistic or savior framing ──
+
+  if (/\bwe make .* thrive\b/i.test(text) || /\bwe make people thrive\b/i.test(text)) {
+    issues.push('"We make people thrive" is paternalistic. People thrive. Envision enables.');
+  }
+  if (/\bwe give jobs to\b/i.test(text) || /\bwe help the blind\b/i.test(text)) {
+    issues.push('Avoid objectifying framing. Center the person\'s agency, not what Envision does for them.');
+  }
+  if (/\bgiving back\b/i.test(text)) {
+    issues.push('Never use "giving back" in reference to Envision\'s work. Reframe around shared value.');
+  }
+  if (/\bproductive members of society\b/i.test(text)) {
+    issues.push('Never use "productive members of society." It is condescending.');
+  }
+  if (/\bovercoming their limitations\b/i.test(text) || /\bovercome their\b/i.test(text)) {
+    issues.push('Avoid "overcoming their limitations." This is deficit framing.');
+  }
+
+  // ── Vague claims without proof ──
+
+  if (/\bcutting[\s-]edge\b/i.test(text) && !(/\bcutting[\s-]edge\b/i.test(text) && text.length > 200)) {
+    issues.push('Avoid "cutting-edge" without specific proof. Name the specific innovation.');
+  }
+  if (/\binnovative research\b/i.test(text)) {
+    issues.push('Avoid "innovative research" without specific proof. Be specific: name the study or outcome.');
+  }
+  if (/\bgroundbreaking\b/i.test(text)) {
+    issues.push('Avoid "groundbreaking" without specific proof. Name the specific breakthrough.');
+  }
+
+  // ── Charity/nonprofit opener in commercial context ──
+
+  const charityOpeners = ['we\'re a nonprofit', 'we are a nonprofit', 'as a charity', 'mission-driven manufacturing'];
+  const foundCharity = charityOpeners.filter((term) => lower.includes(term));
+  if (foundCharity.length > 0) {
+    issues.push('Never open commercial materials with nonprofit or charity framing. Lead with capability first.');
+  }
+
+  // ── Sight-based idioms (general flag) ──
+
+  if (/\bturn a blind eye\b/i.test(text) || /\bin the dark about\b/i.test(text)) {
+    issues.push('Avoid sight-based idioms in BVI-facing content. Use "understand," "notice," or "experience" instead.');
+  }
+
+  // ── Active voice check ──
+
+  if (/\b(was|were|been) (being )?\w+ed\b/i.test(text) && text.length > 100) {
+    issues.push('Review for passive voice. Active voice is preferred per brand guidelines.');
+  }
+
+  // ── Abbreviation check ──
+
   const abbreviations = text.match(/\b[A-Z]{2,5}\b/g);
   if (abbreviations) {
-    const knownAbbrevs = ['US', 'CEO', 'PR', 'HR', 'IT', 'URL', 'PDF'];
+    const knownAbbrevs = ['US', 'CEO', 'PR', 'HR', 'IT', 'URL', 'PDF', 'AP', 'TX', 'KS', 'BVI', 'CEU'];
     const envisionAbbrevs = ['ERI', 'EVRC', 'ECDC', 'BSC'];
-    const unknown = abbreviations.filter(
-      (a) => !knownAbbrevs.includes(a) && !envisionAbbrevs.includes(a)
-    );
     if (envisionAbbrevs.some((a) => abbreviations.includes(a))) {
       const found = envisionAbbrevs.filter((a) => abbreviations.includes(a));
-      // Check if spelled out
       const notSpelledOut = found.filter((a) => {
         if (a === 'ERI' && lower.includes('envision research institute')) return false;
         if (a === 'EVRC' && lower.includes('envision vision rehabilitation center')) return false;
         if (a === 'ECDC' && lower.includes('envision child development center')) return false;
+        if (a === 'BSC' && lower.includes('envision base supply center')) return false;
         return true;
       });
       if (notSpelledOut.length > 0) {
         issues.push(`Spell out abbreviation(s) on first use: ${notSpelledOut.join(', ')}.`);
       }
     }
+    // Check for BVI not introduced
+    if (abbreviations.includes('BVI') && !lower.includes('blind or low vision (bvi)') && !lower.includes('blind or low vision(bvi)')) {
+      // Only flag if BVI appears without the full intro
+      const bviIntroPattern = /blind or low vision \(BVI\)/i;
+      if (!bviIntroPattern.test(text)) {
+        issues.push('Introduce "BVI" on first use as "blind or low vision (BVI)."');
+      }
+    }
   }
 
+  // ── Summary pass ──
+
   if (issues.length === 0) {
-    passed.push('Content appears to follow brand voice guidelines.');
+    passed.push('Content follows Envision brand voice guidelines.');
   }
 
   return { issues, passed };
