@@ -450,9 +450,9 @@ export function MessagingAssistant({ onClose }: { onClose: () => void }) {
           <button className="msg__close msg__close--lock" onClick={onClose}><Icon name="x" /></button>
           <div className="msg__lock-screen">
             <div className="msg__lock-icon"><Icon name="lock" /></div>
-            <h2 className="msg__lock-title">Phase 2 is Here!</h2>
+            <h2 className="msg__lock-title">Phase 2 Coming Soon!</h2>
             <p className="msg__lock-subtitle">
-              Get excited — the Messaging Assistant just leveled up! Enter the password to unlock all-new Phase 2 features.
+              Get excited — the Messaging Assistant is about to level up! Enter the password to get an early look at all-new Phase 2 features.
             </p>
             <form className="msg__lock-form" onSubmit={handlePasswordSubmit}>
               <input
