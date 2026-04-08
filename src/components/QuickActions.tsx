@@ -8,7 +8,7 @@ interface Props {
 
 /** Group quick links by their target section for intuitive bucketing */
 const groups = [
-  { label: 'Get Assets', ids: ['quick-logos', 'quick-brand-book'] },
+  { label: 'Get Assets', ids: ['quick-logos', 'quick-brand-guidelines'] },
   { label: 'Use Templates', ids: ['quick-templates'] },
   { label: 'Submit', ids: ['quick-request', 'quick-web', 'quick-story'] },
   { label: 'Social', ids: ['quick-social-hub'] },

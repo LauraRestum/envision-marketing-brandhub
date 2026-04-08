@@ -13,9 +13,9 @@ export const quickLinks: QuickLink[] = [
     anchorId: 'brand-resources',
   },
   {
-    id: 'quick-brand-book',
-    title: 'Brand Book',
-    icon: 'book',
+    id: 'quick-brand-guidelines',
+    title: 'Brand Guidelines',
+    icon: 'palette',
     actionType: 'anchor',
     anchorId: 'brand-resources',
   },

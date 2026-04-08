@@ -1113,6 +1113,591 @@ img {
   color: var(--text-tertiary);
 }
 
+/* --- Brand Panel Overlay (Colors, Typography, Boilerplate) --- */
+.brand-panel-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(15, 30, 74, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  animation: fadeIn var(--duration-normal) var(--ease);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.brand-panel {
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  width: 100%;
+  max-width: 860px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-xl);
+  animation: slideUp var(--duration-slow) var(--ease);
+}
+
+.brand-panel--narrow {
+  max-width: 560px;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.brand-panel__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: var(--space-6) var(--space-8);
+  border-bottom: 1px solid var(--border-light);
+  flex-shrink: 0;
+}
+
+.brand-panel__title {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.brand-panel__subtitle {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.brand-panel__close {
+  background: var(--gray-50);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all var(--duration-fast) var(--ease);
+  flex-shrink: 0;
+}
+
+.brand-panel__close:hover {
+  background: var(--gray-100);
+  color: var(--text-primary);
+}
+
+.brand-panel__body {
+  padding: var(--space-6) var(--space-8);
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* --- Color Palette Panel --- */
+.color-section {
+  margin-bottom: var(--space-8);
+}
+
+.color-section:last-child {
+  margin-bottom: 0;
+}
+
+.color-section__title {
+  font-family: var(--font-heading);
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-size: var(--text-xs);
+}
+
+.color-section__desc {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-4);
+}
+
+.color-section__grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.color-swatch {
+  display: flex;
+  gap: var(--space-4);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--white);
+}
+
+.color-swatch__preview {
+  width: 100px;
+  min-height: 100px;
+  flex-shrink: 0;
+}
+
+.color-swatch__info {
+  padding: var(--space-3) var(--space-4) var(--space-3) 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.color-swatch__name {
+  font-weight: 700;
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.color-swatch__values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.color-swatch__value {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--gray-50);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  padding: 2px var(--space-2);
+  cursor: pointer;
+  font-family: var(--font);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  transition: all var(--duration-fast) var(--ease);
+}
+
+.color-swatch__value:hover {
+  background: var(--gray-100);
+  border-color: var(--gray-300);
+  color: var(--text-primary);
+}
+
+.color-swatch__label {
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  font-size: 0.625rem;
+  letter-spacing: 0.04em;
+}
+
+.color-swatch__code {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: var(--text-xs);
+}
+
+.color-swatch__copied {
+  color: var(--brand-green);
+  font-weight: 600;
+  font-size: 0.625rem;
+}
+
+.color-swatch__usage {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  line-height: var(--leading-normal);
+}
+
+/* Pillar color grid */
+.pillar-color-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.pillar-color-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  background: var(--gray-25);
+}
+
+.pillar-color-row__dot {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.pillar-color-row__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.pillar-color-row__pillar {
+  font-weight: 600;
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+}
+
+.pillar-color-row__detail {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: 2px;
+}
+
+.pillar-color-row__color-name {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+
+.pillar-color-row__hex {
+  font-size: var(--text-xs);
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  color: var(--text-tertiary);
+}
+
+.pillar-color-row__usage {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+/* --- Typography Panel --- */
+.typo-section {
+  margin-bottom: var(--space-8);
+}
+
+.typo-section:last-child {
+  margin-bottom: 0;
+}
+
+.typo-section__title {
+  font-family: var(--font-heading);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: var(--space-4);
+}
+
+.typo-font-card {
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  background: var(--gray-25);
+}
+
+.typo-font-card__specimen {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--space-4);
+}
+
+.typo-font-card__desc {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: var(--leading-relaxed);
+  margin-bottom: var(--space-4);
+}
+
+.typo-font-card__preview {
+  padding: var(--space-4);
+  background: var(--white);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  font-family: var(--font);
+  color: var(--text-secondary);
+  line-height: var(--leading-relaxed);
+  letter-spacing: 0.02em;
+}
+
+/* Font weights */
+.typo-weights {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.typo-weight-row {
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  background: var(--white);
+}
+
+.typo-weight-row__sample {
+  font-family: var(--font);
+  font-size: var(--text-lg);
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.typo-weight-row__meta {
+  display: flex;
+  gap: var(--space-4);
+  align-items: baseline;
+}
+
+.typo-weight-row__name {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.typo-weight-row__usage {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+/* Typography guidelines */
+.typo-guidelines {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.typo-guideline {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  background: var(--gray-25);
+}
+
+.typo-guideline__rule {
+  font-weight: 600;
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.typo-guideline__detail {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  line-height: var(--leading-relaxed);
+}
+
+/* Typography download */
+.typo-download {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--gray-25);
+}
+
+.typo-download__icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background: var(--brand-navy);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.typo-download__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.typo-download__title {
+  font-weight: 600;
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+}
+
+.typo-download__desc {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.typo-download__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: var(--brand-navy);
+  color: var(--white);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  font-family: var(--font);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all var(--duration-fast) var(--ease);
+}
+
+.typo-download__btn:hover {
+  background: var(--brand-navy-dark);
+}
+
+/* --- Boilerplate Downloader --- */
+.boilerplate-step {
+  text-align: center;
+  padding: var(--space-4) 0;
+}
+
+.boilerplate-step__icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  background: var(--brand-cyan-bg);
+  color: var(--brand-cyan-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-4);
+}
+
+.boilerplate-step__icon--warn {
+  background: var(--brand-yellow-bg);
+  color: #946b00;
+}
+
+.boilerplate-step__icon--success {
+  background: var(--brand-green-bg);
+  color: var(--brand-green-dark);
+}
+
+.boilerplate-step__title {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.boilerplate-step__desc {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: var(--leading-relaxed);
+  margin-bottom: var(--space-4);
+  max-width: 420px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.boilerplate-step__desc--note {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  font-style: italic;
+}
+
+.boilerplate-step__input {
+  display: block;
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: var(--font);
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  resize: vertical;
+  transition: border-color var(--duration-fast) var(--ease);
+  margin-bottom: var(--space-4);
+}
+
+.boilerplate-step__input:focus {
+  outline: none;
+  border-color: var(--brand-cyan);
+  box-shadow: var(--shadow-glow);
+}
+
+.boilerplate-step__input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.boilerplate-step__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  background: var(--brand-navy);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease);
+}
+
+.boilerplate-step__btn:hover {
+  background: var(--brand-navy-dark);
+}
+
+.boilerplate-step__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.boilerplate-step__btn--secondary {
+  background: var(--gray-100);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.boilerplate-step__btn--secondary:hover {
+  background: var(--gray-200);
+}
+
+.boilerplate-step__btn--download {
+  background: var(--brand-green);
+  padding: var(--space-3) var(--space-8);
+  font-size: var(--text-base);
+}
+
+.boilerplate-step__btn--download:hover {
+  background: var(--brand-green-dark);
+}
+
+.boilerplate-step__actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: center;
+}
+
+.boilerplate-step__purpose-echo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-3) var(--space-4);
+  background: var(--gray-50);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-5);
+  text-align: left;
+}
+
+.boilerplate-step__purpose-label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.boilerplate-step__purpose-text {
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+}
+
 /* --- Request Center --- */
 .request-grid {
   display: grid;
