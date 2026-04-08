@@ -16,12 +16,7 @@ const buckets = [
   {
     label: 'Print & Stationery',
     description: 'Letterhead, brochures, signage, and business cards',
-    ids: ['template-letterhead', 'template-brochure', 'template-signage', 'template-business-cards'],
-  },
-  {
-    label: 'Events',
-    description: 'Invitations, programs, badges, and promotional materials',
-    ids: ['template-event'],
+    ids: ['template-letterhead', 'template-brochure'],
   },
 ];
 

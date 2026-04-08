@@ -20,11 +20,6 @@ const buckets = [
     description: 'Brand standards, approved copy, and boilerplate language',
     ids: ['brand-book', 'brand-messaging', 'brand-typography', 'brand-boilerplate'],
   },
-  {
-    label: 'Digital Assets',
-    description: 'Email signatures, social media assets, and more',
-    ids: ['email-signatures', 'social-media-assets'],
-  },
 ];
 
 export function ResourceGrid({ onAction, onMessagingAssistant, onLogoDownloader, onLetterheadDownloader }: Props) {
