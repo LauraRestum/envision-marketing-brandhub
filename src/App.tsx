@@ -4,7 +4,6 @@ import { Header } from '@/components/Header';
 import { UniversalSearch } from '@/components/UniversalSearch';
 import { GuidedAssistant } from '@/components/GuidedAssistant';
 import { QuickActions } from '@/components/QuickActions';
-import { PolicyBanner } from '@/components/PolicyBanner';
 import { ResourceGrid } from '@/components/ResourceGrid';
 import { TemplateGrid } from '@/components/TemplateGrid';
 import { RequestFlow } from '@/components/RequestFlow';
@@ -63,9 +62,6 @@ export default function App() {
 
       {/* Quick Actions */}
       <QuickActions onAction={handleAction} />
-
-      {/* Policy Alerts */}
-      <PolicyBanner />
 
       <main className="main">
         {/* Brand Resources */}

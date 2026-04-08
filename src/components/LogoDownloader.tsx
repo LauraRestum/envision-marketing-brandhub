@@ -8,6 +8,7 @@ import {
   type UseCase,
   type ColorVariant,
 } from '@/data/logoAssets';
+import { policies } from '@/data/policies';
 
 interface Props {
   onClose: () => void;
@@ -209,6 +210,17 @@ export function LogoDownloader({ onClose, onContactClick }: Props) {
             <Icon name="x" />
           </button>
         </div>
+
+        {/* Logo Usage Policy */}
+        {policies.map((policy) => (
+          <div key={policy.id} className="logo-dl__policy">
+            <span className="logo-dl__policy-icon"><Icon name={policy.icon} /></span>
+            <div className="logo-dl__policy-text">
+              <span className="logo-dl__policy-title">{policy.title}: </span>
+              {policy.message}
+            </div>
+          </div>
+        ))}
 
         {/* Breadcrumb */}
         {breadcrumbs.length > 0 && (

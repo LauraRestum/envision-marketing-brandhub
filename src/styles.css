@@ -4705,6 +4705,30 @@ img {
 }
 
 /* Breadcrumb */
+.logo-dl__policy {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-6);
+  background: var(--amber-50);
+  border-bottom: 1px solid var(--amber-100);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+}
+
+.logo-dl__policy-icon {
+  color: var(--amber-500);
+  flex-shrink: 0;
+}
+
+.logo-dl__policy-text {
+  color: var(--gray-700);
+}
+
+.logo-dl__policy-title {
+  font-weight: 700;
+}
+
 .logo-dl__breadcrumb {
   display: flex;
   align-items: center;
