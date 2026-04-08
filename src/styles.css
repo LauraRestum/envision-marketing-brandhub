@@ -4110,6 +4110,131 @@ img {
   color: var(--red-500);
 }
 
+/* Password Lock Screen */
+.msg-assistant--lock {
+  max-width: 440px;
+  position: relative;
+}
+
+.msg__close--lock {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-full);
+  color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  transition: background 150ms, color 150ms;
+}
+
+.msg__close--lock:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--white);
+}
+
+.msg__lock-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--space-10) var(--space-8) var(--space-8);
+  background: linear-gradient(135deg, var(--brand-navy-dark), var(--brand-navy-mid));
+  color: var(--white);
+}
+
+.msg__lock-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-full);
+  background: rgba(92, 177, 53, 0.2);
+  color: var(--brand-green-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-5);
+}
+
+.msg__lock-icon svg {
+  width: 32px;
+  height: 32px;
+}
+
+.msg__lock-title {
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  margin: 0 0 var(--space-3);
+}
+
+.msg__lock-subtitle {
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.6;
+  margin: 0 0 var(--space-6);
+  max-width: 320px;
+}
+
+.msg__lock-form {
+  width: 100%;
+  max-width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.msg__lock-input {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--white);
+  font-size: var(--text-base);
+  text-align: center;
+  letter-spacing: 0.15em;
+  outline: none;
+  transition: border-color 150ms;
+}
+
+.msg__lock-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: normal;
+}
+
+.msg__lock-input:focus {
+  border-color: var(--brand-green-light);
+}
+
+.msg__lock-input--error {
+  border-color: var(--red-500);
+  animation: msg-shake 300ms ease;
+}
+
+.msg__lock-error {
+  color: #ff8a8a;
+  font-size: var(--text-xs);
+  margin: 0;
+}
+
+.msg__lock-btn {
+  width: 100%;
+}
+
+@keyframes msg-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .msg__topic-grid,

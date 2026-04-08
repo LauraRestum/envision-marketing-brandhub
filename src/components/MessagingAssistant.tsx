@@ -335,6 +335,9 @@ function checkBrandCompliance(text: string): { issues: string[]; passed: string[
 // ── Component ──
 
 export function MessagingAssistant({ onClose }: { onClose: () => void }) {
+  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [password, setPassword] = useState('');
+  const [passwordError, setPasswordError] = useState(false);
   const [tab, setTab] = useState<Tab>('compose');
   const [compose, setCompose] = useState<ComposeState>({
     step: 'topic',
@@ -350,6 +353,16 @@ export function MessagingAssistant({ onClose }: { onClose: () => void }) {
   const [reformatPlatform, setReformatPlatform] = useState<PlatformFormat | null>(null);
   const [reformatResult, setReformatResult] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  function handlePasswordSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (password === '123456') {
+      setIsUnlocked(true);
+      setPasswordError(false);
+    } else {
+      setPasswordError(true);
+    }
+  }
 
   // ── Compose flow ──
 
@@ -429,6 +442,39 @@ export function MessagingAssistant({ onClose }: { onClose: () => void }) {
     : (tab === 'reformat' && reformatResult)
       ? checkBrandCompliance(reformatResult)
       : null;
+
+  if (!isUnlocked) {
+    return (
+      <div className="msg-overlay" onClick={onClose}>
+        <div className="msg-assistant msg-assistant--lock" onClick={(e) => e.stopPropagation()}>
+          <button className="msg__close msg__close--lock" onClick={onClose}><Icon name="x" /></button>
+          <div className="msg__lock-screen">
+            <div className="msg__lock-icon"><Icon name="lock" /></div>
+            <h2 className="msg__lock-title">Phase 2 is Here!</h2>
+            <p className="msg__lock-subtitle">
+              Get excited — the Messaging Assistant just leveled up! Enter the password to unlock all-new Phase 2 features.
+            </p>
+            <form className="msg__lock-form" onSubmit={handlePasswordSubmit}>
+              <input
+                className={`msg__lock-input ${passwordError ? 'msg__lock-input--error' : ''}`}
+                type="password"
+                placeholder="Enter password"
+                value={password}
+                onChange={(e) => { setPassword(e.target.value); setPasswordError(false); }}
+                autoFocus
+              />
+              {passwordError && (
+                <p className="msg__lock-error">Incorrect password. Try again!</p>
+              )}
+              <button className="msg__btn msg__btn--primary msg__lock-btn" type="submit">
+                Unlock
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="msg-overlay" onClick={onClose}>
