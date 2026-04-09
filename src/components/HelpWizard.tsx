@@ -32,7 +32,7 @@ const nodes: Record<string, WizardNode> = {
       { label: 'I need to find something that already exists', next: 'find-existing' },
       { label: 'I need to build or create something new', next: 'build-new' },
       { label: 'I need to submit a request to the marketing team', next: 'submit-request' },
-      { label: "I'm just browsing to see what's available", anchorId: 'brand-resources', recommendation: "Check out the Brand Resources section — it has logos, guidelines, templates, and more." },
+      { label: "I'm just browsing to see what's available", anchorId: 'brand-identity', recommendation: "Check out the Brand Identity section — it has logos, guidelines, templates, and more." },
     ],
   },
 

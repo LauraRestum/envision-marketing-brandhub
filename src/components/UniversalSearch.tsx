@@ -4,6 +4,8 @@ import { ImageryResultCard } from './ImageryResultCard';
 import { resources } from '@/data/resources';
 import { templates } from '@/data/templates';
 import { requestForms } from '@/data/requestForms';
+import { decisionCards } from '@/data/decisionCards';
+import { approvedCopy } from '@/data/approvedMessaging';
 import { resolveImageryRoute, type ImageryRouteResult } from '@/lib/resolveImageryRoute';
 import type { ActionType } from '@/data/types';
 
@@ -20,19 +22,117 @@ interface SearchItem {
   icon?: string;
 }
 
-const SEARCH_HINTS = ['logo', 'letterhead', 'presentation', 'reprint', 'brand guidelines', 'business card', 'classroom photos', 'gala'];
+const SEARCH_HINTS = ['logo', 'letterhead', 'presentation', 'colors', 'brand guidelines', 'imagery', 'story', 'print'];
+
+/** Common synonyms for forgiving keyword matching */
+const SYNONYMS: Record<string, string[]> = {
+  photo: ['imagery', 'image', 'picture', 'photography', 'photos'],
+  imagery: ['photo', 'image', 'picture', 'photography', 'photos'],
+  image: ['photo', 'imagery', 'picture', 'photography'],
+  picture: ['photo', 'imagery', 'image', 'photography'],
+  ppt: ['presentation', 'powerpoint', 'slides', 'deck'],
+  powerpoint: ['presentation', 'ppt', 'slides', 'deck'],
+  presentation: ['ppt', 'powerpoint', 'slides', 'deck'],
+  slides: ['presentation', 'ppt', 'powerpoint', 'deck'],
+  deck: ['presentation', 'ppt', 'powerpoint', 'slides'],
+  logo: ['brand identity', 'logomark', 'wordmark', 'brand mark'],
+  font: ['typography', 'typeface', 'type'],
+  typography: ['font', 'typeface', 'type', 'fonts'],
+  color: ['palette', 'colours', 'colors', 'hex', 'rgb'],
+  colours: ['color', 'palette', 'colors'],
+  colors: ['color', 'palette', 'colours'],
+  print: ['reprint', 'printing', 'printer', 'envision print services'],
+  reprint: ['print', 'reorder', 'printing'],
+  letterhead: ['stationery', 'letter', 'correspondence'],
+  stationery: ['letterhead', 'letter'],
+  story: ['news', 'achievement', 'milestone', 'spotlight', 'submit'],
+  video: ['imagery', 'media', 'footage'],
+  brochure: ['flyer', 'handout', 'pamphlet'],
+  flyer: ['brochure', 'handout', 'pamphlet'],
+  social: ['facebook', 'linkedin', 'instagram', 'tiktok', 'social media'],
+  messaging: ['copy', 'tagline', 'talking points', 'language', 'boilerplate'],
+  copy: ['messaging', 'tagline', 'talking points', 'language'],
+  guidelines: ['brand guidelines', 'colors', 'typography', 'fonts', 'brand identity'],
+  brand: ['logo', 'colors', 'typography', 'guidelines', 'identity'],
+};
+
+function expandQuery(terms: string[]): string[] {
+  const expanded = new Set(terms);
+  for (const term of terms) {
+    const syns = SYNONYMS[term];
+    if (syns) {
+      for (const s of syns) expanded.add(s);
+    }
+    // Handle plural/singular
+    if (term.endsWith('s') && term.length > 3) {
+      expanded.add(term.slice(0, -1));
+    } else if (!term.endsWith('s')) {
+      expanded.add(term + 's');
+    }
+  }
+  return Array.from(expanded);
+}
 
 function buildIndex(): SearchItem[] {
   const items: SearchItem[] = [];
+
+  // Resources
   for (const r of resources) {
-    items.push({ ...r, category: 'Brand Resource', anchorId: 'brand-resources' });
+    items.push({ ...r, category: 'Brand Resource', anchorId: r.anchorId || 'brand-resources' });
   }
+
+  // Templates
   for (const t of templates) {
-    items.push({ ...t, category: 'Template', anchorId: 'templates' });
+    items.push({ ...t, category: 'Template', anchorId: t.anchorId || 'templates' });
   }
+
+  // Request forms
   for (const f of requestForms) {
-    items.push({ id: f.id, title: f.title, description: f.description, category: 'Request', actionType: f.actionType, href: f.href, modalKey: f.modalKey, keywords: f.keywords, icon: f.icon });
+    items.push({ id: f.id, title: f.title, description: f.description, category: 'Request', actionType: f.actionType, href: f.href, modalKey: f.modalKey, anchorId: f.anchorId, keywords: f.keywords, icon: f.icon });
   }
+
+  // Decision cards (quiz entry points)
+  for (const dc of decisionCards) {
+    items.push({
+      id: dc.id,
+      title: dc.title,
+      description: dc.description,
+      category: 'Quick Action',
+      actionType: dc.actionType,
+      href: dc.href,
+      modalKey: dc.modalKey,
+      anchorId: dc.anchorId,
+      keywords: dc.keywords,
+      icon: dc.icon,
+    });
+  }
+
+  // Approved messaging / copy blocks
+  for (const block of approvedCopy) {
+    items.push({
+      id: `msg-${block.id}`,
+      title: block.title,
+      description: block.content.slice(0, 120) + (block.content.length > 120 ? '...' : ''),
+      category: 'Messaging',
+      actionType: 'anchor',
+      anchorId: 'messaging-assistant',
+      keywords: [...block.tags, 'messaging', 'copy', 'approved'],
+      icon: 'message',
+    });
+  }
+
+  // Section anchors for direct navigation
+  const sections: SearchItem[] = [
+    { id: 'nav-brand-identity', title: 'Brand Identity — Logos', description: 'Official Envision logos in horizontal, stacked, and vertical layouts.', category: 'Section', actionType: 'anchor', anchorId: 'brand-identity', keywords: ['logo', 'brand identity', 'logos', 'brand mark', 'wordmark'], icon: 'logo' },
+    { id: 'nav-brand-guidelines', title: 'Brand Guidelines', description: 'Colors, typography, and font guidelines.', category: 'Section', actionType: 'anchor', anchorId: 'brand-guidelines', keywords: ['guidelines', 'colors', 'typography', 'fonts', 'brand guidelines', 'color palette'], icon: 'palette' },
+    { id: 'nav-templates', title: 'Templates', description: 'Presentation deck, letterhead, and print tools.', category: 'Section', actionType: 'anchor', anchorId: 'templates', keywords: ['template', 'presentation', 'letterhead', 'print'], icon: 'document' },
+    { id: 'nav-resources', title: 'Brand Resources — Imagery & Video', description: 'Approved photography and video library.', category: 'Section', actionType: 'anchor', anchorId: 'brand-resources', keywords: ['imagery', 'photo', 'video', 'photography', 'resources'], icon: 'image' },
+    { id: 'nav-messaging', title: 'Messaging Assistant', description: 'Compose on-brand content and check brand compliance.', category: 'Section', actionType: 'anchor', anchorId: 'messaging-assistant', keywords: ['messaging', 'assistant', 'compose', 'brand check', 'compliance'], icon: 'sparkle' },
+    { id: 'nav-social', title: 'Social Media Quick Links', description: 'Links to official Envision social media profiles.', category: 'Section', actionType: 'anchor', anchorId: 'social-links', keywords: ['social', 'facebook', 'linkedin', 'instagram', 'tiktok', 'social media'], icon: 'social' },
+    { id: 'nav-story', title: 'Submit a Story', description: 'Share a story, achievement, or milestone for Envision communications.', category: 'Section', actionType: 'anchor', anchorId: 'story-submission', keywords: ['story', 'submit', 'news', 'achievement', 'milestone'], icon: 'star' },
+  ];
+  items.push(...sections);
+
   return items;
 }
 
@@ -50,28 +150,45 @@ export function UniversalSearch({ onAction, onLogoDownloader, onLetterheadDownlo
   const wrapRef = useRef<HTMLDivElement>(null);
   const index = useMemo(buildIndex, []);
 
-  // Standard resource/template/form results
+  // Standard resource/template/form results with synonym expansion
   const results = useMemo(() => {
     if (!query.trim()) return [];
     const q = query.toLowerCase().trim();
     const terms = q.split(/\s+/);
+    const expandedTerms = expandQuery(terms);
+
     return index
       .map((item) => {
         const haystack = `${item.title} ${item.description} ${item.keywords.join(' ')}`.toLowerCase();
         let score = 0;
+
+        // Exact terms score higher
         for (const t of terms) {
-          if (haystack.includes(t)) score++;
+          if (haystack.includes(t)) score += 2;
         }
-        if (item.title.toLowerCase().includes(q)) score += 3;
+        // Expanded (synonym) terms score lower
+        for (const t of expandedTerms) {
+          if (!terms.includes(t) && haystack.includes(t)) score += 1;
+        }
+        // Partial match bonus
+        for (const t of terms) {
+          for (const kw of item.keywords) {
+            if (kw.toLowerCase().startsWith(t) || t.startsWith(kw.toLowerCase())) {
+              score += 1;
+            }
+          }
+        }
+        // Title exact match bonus
+        if (item.title.toLowerCase().includes(q)) score += 4;
         return { item, score };
       })
       .filter((r) => r.score > 0)
       .sort((a, b) => b.score - a.score)
-      .slice(0, 8)
+      .slice(0, 10)
       .map((r) => r.item);
   }, [query, index]);
 
-  // Imagery taxonomy match — runs alongside standard search
+  // Imagery taxonomy match
   const currentImageryMatch = useMemo(() => {
     if (!query.trim()) return null;
     return resolveImageryRoute(query);
@@ -191,11 +308,11 @@ export function UniversalSearch({ onAction, onLogoDownloader, onLetterheadDownlo
               No results for "{query}". Try a different term or <button
                 style={{ color: 'var(--brand-cyan)', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 'inherit', padding: 0 }}
                 onClick={() => {
-                  onAction({ actionType: 'anchor', anchorId: 'request-center' });
+                  onAction({ actionType: 'anchor', anchorId: 'story-submission' });
                   setQuery('');
                   setFocused(false);
                 }}
-              >submit a request</button>.
+              >submit a story</button>.
             </div>
           )}
         </div>
