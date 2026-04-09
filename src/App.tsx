@@ -10,6 +10,7 @@ import { MessagingAssistant } from '@/components/MessagingAssistant';
 import { LogoDownloader } from '@/components/LogoDownloader';
 import { LetterheadDownloader } from '@/components/LetterheadDownloader';
 import { QuizOverlay } from '@/components/QuizOverlay';
+import { UpdateReprintWizard } from '@/components/UpdateReprintWizard';
 import { ApprovedMessagingModal } from '@/components/ApprovedMessagingModal';
 import { SocialIconRow } from '@/components/SocialIconRow';
 import { StartNewRequest } from '@/components/StartNewRequest';
@@ -155,7 +156,8 @@ type ActiveOverlay =
   | 'presentation-quiz'
   | 'messaging-modal'
   | 'messaging-assistant'
-  | 'help-wizard';
+  | 'help-wizard'
+  | 'update-reprint-wizard';
 
 export default function App() {
   const [activeModal, setActiveModal] = useState<string | null>(null);
@@ -181,8 +183,7 @@ export default function App() {
         document.getElementById('brand-assets')?.scrollIntoView({ behavior: 'smooth' });
         break;
       case 'update':
-        // Open the reprint/web update form directly
-        setActiveModal('design-request');
+        setActiveOverlay('update-reprint-wizard');
         break;
       case 'help':
         setActiveOverlay('help-wizard');
@@ -539,6 +540,14 @@ export default function App() {
         <HelpWizard
           onClose={closeOverlay}
           onNavigate={handleWizardNavigate}
+        />
+      )}
+
+      {/* Update or Reprint Wizard */}
+      {activeOverlay === 'update-reprint-wizard' && (
+        <UpdateReprintWizard
+          onClose={closeOverlay}
+          onOpenModal={setActiveModal}
         />
       )}
     </div>
