@@ -16,62 +16,11 @@ import { StartNewRequest } from '@/components/StartNewRequest';
 import { StorySubmission } from '@/components/StorySubmission';
 import { ColorPalettePanel } from '@/components/ColorPalettePanel';
 import { TypographyPanel } from '@/components/TypographyPanel';
-import { colorQuiz, typographyQuiz, imageryQuiz, videoQuiz, presentationQuiz } from '@/data/quizConfigs';
+import { imageryQuiz, videoQuiz, presentationQuiz } from '@/data/quizConfigs';
 import { useAction } from '@/hooks/useAction';
 import type { ActionType } from '@/data/types';
 
 // ── Quiz result renderers ──
-
-function ColorResult({ answers }: { answers: Record<string, string> }) {
-  const useCase = answers['use-case'];
-  return (
-    <div className="quiz-result">
-      <div className="quiz-result__header">
-        <Icon name="palette" />
-        <h3 className="quiz-result__title">
-          {useCase === 'print' ? 'Print Color Values' : useCase === 'digital' ? 'Digital Color Values' : useCase === 'presentation' ? 'Presentation Color Values' : 'Full Color Palette'}
-        </h3>
-      </div>
-      <p className="quiz-result__desc">
-        {useCase === 'print'
-          ? 'Use CMYK and Pantone values for all printed materials.'
-          : useCase === 'digital'
-          ? 'Use HEX and RGB values for screens and digital content.'
-          : 'All color formats are shown below. Click any value to copy.'}
-      </p>
-      <p className="quiz-result__note">The full interactive palette is displayed below.</p>
-    </div>
-  );
-}
-
-function TypographyResult({ answers }: { answers: Record<string, string> }) {
-  const need = answers['need'];
-  return (
-    <div className="quiz-result">
-      <div className="quiz-result__header">
-        <Icon name="typography" />
-        <h3 className="quiz-result__title">
-          {need === 'files' ? 'Font Downloads' : need === 'guidelines' ? 'Typography Guidelines' : 'Fonts & Guidelines'}
-        </h3>
-      </div>
-      {(need === 'files' || need === 'both') && (
-        <a
-          href="https://fonts.google.com/specimen/Montserrat"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="quiz-result__download-btn"
-        >
-          <Icon name="download" /> Download Montserrat from Google Fonts
-        </a>
-      )}
-      {(need === 'guidelines' || need === 'both') && (
-        <p className="quiz-result__desc">
-          Envision uses Montserrat across all materials. Weights: Regular (400) for body, Medium (500) for subheads, SemiBold (600) for emphasis, Bold (700) for headings. Full usage guidelines are shown below.
-        </p>
-      )}
-    </div>
-  );
-}
 
 function ImageryResult({ answers }: { answers: Record<string, string> }) {
   const topic = answers['topic'];
@@ -176,7 +125,7 @@ const brandAssetCards: SectionCard[] = [
 
 const brandIdentityCards: SectionCard[] = [
   { id: 'colors', title: 'Color Palette', description: 'Official brand colors with HEX, RGB, CMYK, and Pantone values for all applications.', icon: 'palette', cta: 'View Colors' },
-  { id: 'typography', title: 'Typography & Fonts', description: 'Official brand typeface Montserrat — font files, weights, and usage guidelines.', icon: 'typography', cta: 'View Fonts' },
+  { id: 'typography', title: 'Typography & Fonts', description: 'Official brand typefaces Gotham and Montserrat — font files, weights, and usage guidelines.', icon: 'typography', cta: 'View Fonts' },
   { id: 'messaging', title: 'Approved Messaging & Copy', description: 'Download approved boilerplate and reference messaging by pillar.', icon: 'message', tag: 'Essential', cta: 'View Messaging' },
 ];
 
@@ -191,16 +140,12 @@ type ActiveOverlay =
   | null
   | 'logo-downloader'
   | 'letterhead-downloader'
-  | 'color-quiz'
-  | 'typography-quiz'
   | 'imagery-quiz'
   | 'video-quiz'
   | 'presentation-quiz'
   | 'messaging-modal'
   | 'messaging-assistant'
-  | 'help-wizard'
-  | 'color-panel'
-  | 'typography-panel';
+  | 'help-wizard';
 
 export default function App() {
   const [activeModal, setActiveModal] = useState<string | null>(null);
@@ -249,10 +194,10 @@ export default function App() {
         setActiveOverlay('video-quiz');
         break;
       case 'colors':
-        setActiveOverlay('color-quiz');
+        setShowColorPanel(true);
         break;
       case 'typography':
-        setActiveOverlay('typography-quiz');
+        setShowTypographyPanel(true);
         break;
       case 'messaging':
         setActiveOverlay('messaging-modal');
@@ -532,50 +477,12 @@ export default function App() {
         />
       )}
 
-      {/* Color Quiz → Panel */}
-      {activeOverlay === 'color-quiz' && (
-        <QuizOverlay
-          config={colorQuiz}
-          onClose={closeOverlay}
-          renderResult={(answers) => {
-            return (
-              <>
-                <ColorResult answers={answers} />
-                <button
-                  className="quiz-result__action-btn"
-                  onClick={() => { setActiveOverlay(null); setShowColorPanel(true); }}
-                >
-                  <Icon name="palette" /> View Full Color Palette
-                </button>
-              </>
-            );
-          }}
-        />
-      )}
+      {/* Color Palette Panel (opens directly) */}
       {showColorPanel && (
         <ColorPalettePanel onClose={() => setShowColorPanel(false)} />
       )}
 
-      {/* Typography Quiz → Panel */}
-      {activeOverlay === 'typography-quiz' && (
-        <QuizOverlay
-          config={typographyQuiz}
-          onClose={closeOverlay}
-          renderResult={(answers) => {
-            return (
-              <>
-                <TypographyResult answers={answers} />
-                <button
-                  className="quiz-result__action-btn"
-                  onClick={() => { setActiveOverlay(null); setShowTypographyPanel(true); }}
-                >
-                  <Icon name="typography" /> View Full Typography Guide
-                </button>
-              </>
-            );
-          }}
-        />
-      )}
+      {/* Typography Panel (opens directly) */}
       {showTypographyPanel && (
         <TypographyPanel onClose={() => setShowTypographyPanel(false)} />
       )}

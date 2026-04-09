@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Icon } from './Icons';
-import { primaryColors, secondaryColors, pillarColors } from '@/data/brandColors';
+import { primaryColors, secondaryColors } from '@/data/brandColors';
 import type { BrandColor } from '@/data/brandColors';
 
 function copyToClipboard(text: string) {
@@ -82,25 +82,6 @@ export function ColorPalettePanel({ onClose }: { onClose: () => void }) {
             </div>
           </div>
 
-          <div className="color-section">
-            <h3 className="color-section__title">Pillar color direction</h3>
-            <p className="color-section__desc">Each Envision pillar has a designated color for consistent identification across all materials.</p>
-            <div className="pillar-color-grid">
-              {pillarColors.map((p) => (
-                <div key={p.pillar} className="pillar-color-row">
-                  <div className="pillar-color-row__dot" style={{ backgroundColor: p.hex }} />
-                  <div className="pillar-color-row__info">
-                    <div className="pillar-color-row__pillar">{p.pillar}</div>
-                    <div className="pillar-color-row__detail">
-                      <span className="pillar-color-row__color-name">{p.colorName}</span>
-                      <span className="pillar-color-row__hex">{p.hex}</span>
-                    </div>
-                    <div className="pillar-color-row__usage">{p.usage}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
     </div>
