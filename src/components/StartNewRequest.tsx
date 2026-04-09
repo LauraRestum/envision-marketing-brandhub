@@ -27,9 +27,9 @@ const requestCards = [
     modalKey: 'campaign-planning',
   },
   {
-    id: 'custom',
-    title: 'Request Something Custom',
-    description: 'Can\'t find what you need? Submit a custom request to the marketing team.',
+    id: 'asset',
+    title: 'Request an Asset',
+    description: 'Request a specific asset or resource from the marketing team.',
     icon: 'download',
     modalKey: 'asset-request',
   },
