@@ -582,7 +582,7 @@ export const intakeDefinitions: Record<string, IntakeDefinition> = {
     title: 'Asset Request',
     description: 'Answer these questions and we will pre-fill the ClickUp form for you. You will only need to upload attachments.',
     emailSubject: 'Asset Request',
-    embedUrl: 'https://forms.clickup.com/9010115835/f/8cgpx7v-94453/JK968N8IMKLFUBBTMI',
+    embedUrl: 'https://forms.clickup.com/9010115835/f/8cgpx7v-94473/4XU9UHCRWNRTIBMQ9D',
     questions: [
       {
         id: 'requestor_name',

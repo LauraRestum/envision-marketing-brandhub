@@ -33,6 +33,19 @@ export function Modal({ modalKey, onClose }: ModalProps) {
     };
   }, [modalKey, handleEsc]);
 
+  // Load the ClickUp dynamic-height embed script when a modal opens
+  useEffect(() => {
+    if (!modalKey) return;
+    const SCRIPT_SRC = 'https://app-cdn.clickup.com/assets/js/forms-embed/v1.js';
+    // Avoid duplicating the script tag
+    if (!document.querySelector(`script[src="${SCRIPT_SRC}"]`)) {
+      const s = document.createElement('script');
+      s.src = SCRIPT_SRC;
+      s.async = true;
+      document.body.appendChild(s);
+    }
+  }, [modalKey]);
+
   if (!modalKey) return null;
 
   const form = formRegistry[modalKey];
@@ -49,10 +62,13 @@ export function Modal({ modalKey, onClose }: ModalProps) {
         </div>
         <div className="modal__body">
           <iframe
-            className="modal__iframe"
+            className="clickup-embed clickup-dynamic-height modal__iframe"
             src={form.embedUrl}
             title={form.title}
             loading="lazy"
+            width="100%"
+            height="100%"
+            style={{ background: 'transparent', border: 'none' }}
           />
         </div>
       </div>
