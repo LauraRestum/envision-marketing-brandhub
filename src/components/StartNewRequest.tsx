@@ -47,7 +47,7 @@ export function StartNewRequest({ onOpenModal }: Props) {
           </p>
         </div>
 
-        <div className="resource-grid resource-grid--3col">
+        <div className="resource-grid resource-grid--2col">
           {requestCards.map((card) => (
             <button
               key={card.id}
