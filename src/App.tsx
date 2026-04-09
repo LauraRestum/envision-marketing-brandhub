@@ -1,12 +1,16 @@
 import { useState } from 'react';
 import { useAction } from '@/hooks/useAction';
+import { FEATURES } from '@/config/features';
 import { Header } from '@/components/Header';
 import { UniversalSearch } from '@/components/UniversalSearch';
-import { GuidedAssistant } from '@/components/GuidedAssistant';
-import { QuickActions } from '@/components/QuickActions';
-import { ResourceGrid } from '@/components/ResourceGrid';
+import { HeroTiles } from '@/components/HeroTiles';
+import { BrandIdentity } from '@/components/BrandIdentity';
+import { BrandGuidelines } from '@/components/BrandGuidelines';
 import { TemplateGrid } from '@/components/TemplateGrid';
+import { ResourceGrid } from '@/components/ResourceGrid';
 import { RequestFlow } from '@/components/RequestFlow';
+import { MessagingPreview } from '@/components/MessagingPreview';
+import { SocialQuickLinks } from '@/components/SocialQuickLinks';
 import { StorySubmission } from '@/components/StorySubmission';
 import { SocialMediaHub } from '@/components/SocialMediaHub';
 import { Footer } from '@/components/Footer';
@@ -44,41 +48,49 @@ export default function App() {
     <div className="app">
       <Header onContactClick={() => setShowContact(true)} />
 
-      {/* Hero with Universal Search */}
+      {/* Hero — "What do you need today?" + search + 4 quick-link tiles */}
       <section className="hero">
         <div className="hero__glow" />
         <div className="hero__inner">
-          <p className="hero__welcome">Your Strategic Marketing Partner</p>
-          <h1 className="hero__title">What do you need?</h1>
+          <h1 className="hero__title">What do you need today?</h1>
           <p className="hero__subtitle">
-            From brand strategy to creative execution, we're here to elevate your vision — let's build something great together.
+            From brand strategy to creative execution, we're here to elevate your vision.
           </p>
           <UniversalSearch onAction={handleAction} onLogoDownloader={() => setShowLogoDownloader(true)} onLetterheadDownloader={() => setShowLetterheadDownloader(true)} />
         </div>
+        <HeroTiles onAction={handleAction} onHelpWizard={() => setShowWizard(true)} />
       </section>
 
-      {/* Guided Needs Assistant */}
-      <GuidedAssistant onAction={handleAction} onHelpWizard={() => setShowWizard(true)} />
-
-      {/* Quick Actions */}
-      <QuickActions onAction={handleAction} />
-
       <main className="main">
-        {/* Brand Resources */}
-        <ResourceGrid onAction={handleAction} onMessagingAssistant={() => setShowMessaging(true)} onLogoDownloader={() => setShowLogoDownloader(true)} onLetterheadDownloader={() => setShowLetterheadDownloader(true)} />
+        {/* Section 1 — Brand Identity (logos) */}
+        <BrandIdentity onLogoDownloader={() => setShowLogoDownloader(true)} />
 
-        {/* Templates */}
+        {/* Section 2 — Brand Guidelines (colors, typography, fonts) */}
+        <BrandGuidelines />
+
+        {/* Section 3 — Templates (flat list, no subcategories) */}
         <TemplateGrid onAction={handleAction} onLetterheadDownloader={() => setShowLetterheadDownloader(true)} />
 
-        {/* Request Center — gated decision flow + smart intake */}
+        {/* Request Center — backend quiz/intake layer, not a featured section */}
         <RequestFlow />
 
-        {/* Social Media Hub — platform links + content routing */}
-        <SocialMediaHub onAction={handleAction} onMessagingAssistant={() => setShowMessaging(true)} />
-      </main>
+        {/* Section 4 — Brand Resources (imagery + video) */}
+        <ResourceGrid onAction={handleAction} onLogoDownloader={() => setShowLogoDownloader(true)} onLetterheadDownloader={() => setShowLetterheadDownloader(true)} />
 
-      {/* Story Submission — dedicated section, not a modal */}
-      <StorySubmission />
+        {/* Section 5 — Messaging Assistant (small, locked, Phase 2 preview) */}
+        <MessagingPreview onOpen={() => setShowMessaging(true)} />
+
+        {/* Section 6 — Social Media Quick Links (icon row) */}
+        <SocialQuickLinks />
+
+        {/* Full Social Media Hub — behind feature flag */}
+        {FEATURES.SOCIAL_MEDIA_HUB && (
+          <SocialMediaHub onAction={handleAction} onMessagingAssistant={() => setShowMessaging(true)} />
+        )}
+
+        {/* Section 7 — Submit a Story (Web3Forms) */}
+        <StorySubmission />
+      </main>
 
       <Footer onContactClick={() => setShowContact(true)} />
 
