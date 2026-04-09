@@ -35,35 +35,52 @@ export function StorySubmission() {
     setError('');
 
     try {
-      const formData = new FormData();
       const accessKey = import.meta.env.VITE_WEB3FORMS_SUBMIT_STORY_KEY || 'df0b6cfb-7e47-4d73-b27f-a3b8b925561e';
-      formData.append('access_key', accessKey);
-      formData.append('subject', 'New Story Submission — Brand Hub');
-      formData.append('from_name', 'Envision Brand Hub');
-      formData.append('name', name);
-      formData.append('email', email);
-      formData.append('story_title', title);
-      formData.append('story_description', description);
-      // Honeypot for spam protection
-      formData.append('botcheck', '');
+
+      const payload = {
+        access_key: accessKey,
+        subject: 'New Story Submission — Brand Hub',
+        from_name: 'Envision Brand Hub',
+        name,
+        email,
+        story_title: title,
+        story_description: description,
+        botcheck: '',
+      };
+
+      let res: Response;
 
       if (attachment) {
+        // Use FormData when a file is attached
+        const formData = new FormData();
+        Object.entries(payload).forEach(([key, value]) => formData.append(key, value));
         formData.append('attachment', attachment);
+        res = await fetch(WEB3FORMS_URL, {
+          method: 'POST',
+          headers: { 'Accept': 'application/json' },
+          body: formData,
+        });
+      } else {
+        // Use JSON for submissions without files (recommended by Web3Forms)
+        res = await fetch(WEB3FORMS_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
       }
-
-      const res = await fetch(WEB3FORMS_URL, {
-        method: 'POST',
-        body: formData,
-      });
 
       const data = await res.json();
       if (data.success) {
         setSubmitted(true);
       } else {
-        throw new Error(data.message || 'Submission failed');
+        setError(data.message || 'Submission failed. Please try again.');
       }
-    } catch {
-      setError('Something went wrong. Please try again.');
+    } catch (err) {
+      console.error('Story submission error:', err);
+      setError('Unable to submit. Please check your connection and try again.');
     } finally {
       setSubmitting(false);
     }
