@@ -1,40 +1,33 @@
 import { useState, FormEvent } from 'react';
 import { Icon } from './Icons';
-import { featuredContent } from '@/data/featuredContent';
 
-const STORY_PROMPTS = [
-  {
-    icon: 'trophy',
-    label: 'Milestones & Achievements',
-    text: 'A team or individual reached a significant goal, certification, or accomplishment.',
-  },
-  {
-    icon: 'heart',
-    label: 'Patient & Community Impact',
-    text: 'A moment where Envision made a meaningful difference for a patient, family, or community.',
-  },
-  {
-    icon: 'users',
-    label: 'Team Spotlights',
-    text: 'Recognize a colleague or team doing exceptional work behind the scenes.',
-  },
-  {
-    icon: 'megaphone',
-    label: 'News & Announcements',
-    text: 'New partnerships, program launches, facility openings, or organizational updates.',
-  },
+const IDEA_PROMPTS = [
+  { label: 'A patient impact moment', icon: 'heart' },
+  { label: 'A team achievement', icon: 'trophy' },
+  { label: 'A milestone or anniversary', icon: 'star' },
+  { label: 'Community recognition', icon: 'users' },
+  { label: 'An innovation or breakthrough', icon: 'sparkle' },
 ];
 
-const INTAKE_URL = 'https://envision-marketing-dashboard-jnqm.vercel.app/api/intake';
+const WEB3FORMS_URL = 'https://api.web3forms.com/submit';
 
 export function StorySubmission() {
-  const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [story, setStory] = useState('');
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [attachment, setAttachment] = useState<File | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+
+  function handlePromptClick(prompt: string) {
+    if (!title) {
+      setTitle(prompt);
+    } else if (!description) {
+      setDescription(prompt + ' — ');
+    }
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -42,19 +35,33 @@ export function StorySubmission() {
     setError('');
 
     try {
-      const res = await fetch(INTAKE_URL, {
+      const formData = new FormData();
+      const accessKey = import.meta.env.VITE_WEB3FORMS_SUBMIT_STORY_KEY || 'df0b6cfb-7e47-4d73-b27f-a3b8b925561e';
+      formData.append('access_key', accessKey);
+      formData.append('subject', 'New Story Submission — Brand Hub');
+      formData.append('from_name', 'Envision Brand Hub');
+      formData.append('name', name);
+      formData.append('email', email);
+      formData.append('story_title', title);
+      formData.append('story_description', description);
+      // Honeypot for spam protection
+      formData.append('botcheck', '');
+
+      if (attachment) {
+        formData.append('attachment', attachment);
+      }
+
+      const res = await fetch(WEB3FORMS_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'story_submission',
-          submitterName: name,
-          submitterEmail: email,
-          body: story,
-        }),
+        body: formData,
       });
 
-      if (!res.ok) throw new Error('Submission failed');
-      setSubmitted(true);
+      const data = await res.json();
+      if (data.success) {
+        setSubmitted(true);
+      } else {
+        throw new Error(data.message || 'Submission failed');
+      }
     } catch {
       setError('Something went wrong. Please try again.');
     } finally {
@@ -67,81 +74,104 @@ export function StorySubmission() {
       <div className="story__inner">
         <div className="story__content">
           <div className="story__eyebrow">Share Your Story</div>
-          <h2 className="story__title">{featuredContent.title}</h2>
-          <p className="story__desc">{featuredContent.description}</p>
+          <h2 className="story__title">Have a story worth sharing?</h2>
+          <p className="story__desc">
+            Patient impact moments, team achievements, milestones, and community recognition — we feature the best across Envision newsletters, social channels, and internal communications.
+          </p>
+
+          {/* Idea prompt chips */}
+          <div className="story__prompts-row">
+            {IDEA_PROMPTS.map((prompt) => (
+              <button
+                key={prompt.label}
+                className="story__prompt-chip"
+                onClick={() => handlePromptClick(prompt.label)}
+                type="button"
+              >
+                <Icon name={prompt.icon} />
+                <span>{prompt.label}</span>
+              </button>
+            ))}
+          </div>
 
           {submitted ? (
             <div className="story__success">
               <Icon name="sparkle" />
-              <p>Your submission was received. The Envision marketing team will follow up soon.</p>
+              <div>
+                <p className="story__success-title">Story submitted!</p>
+                <p>The Envision marketing team will review your submission and follow up soon.</p>
+              </div>
             </div>
-          ) : showForm ? (
+          ) : (
             <form className="story__form" onSubmit={handleSubmit}>
+              {/* Honeypot field — hidden from users */}
+              <input type="checkbox" name="botcheck" className="story__honeypot" tabIndex={-1} autoComplete="off" />
+
+              <div className="story__form-row">
+                <label className="story__field">
+                  <span className="story__label">Your Name <span className="story__required">*</span></span>
+                  <input
+                    type="text"
+                    className="story__input"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                    placeholder="First and last name"
+                  />
+                </label>
+                <label className="story__field">
+                  <span className="story__label">Your Email <span className="story__required">*</span></span>
+                  <input
+                    type="email"
+                    className="story__input"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    placeholder="you@envisionus.com"
+                  />
+                </label>
+              </div>
+
               <label className="story__field">
-                <span className="story__label">Your Name</span>
+                <span className="story__label">Story Title <span className="story__required">*</span></span>
                 <input
                   type="text"
                   className="story__input"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
                   required
-                  placeholder="First and last name"
+                  placeholder="Give your story a short title"
                 />
               </label>
+
               <label className="story__field">
-                <span className="story__label">Your Email</span>
-                <input
-                  type="email"
-                  className="story__input"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  placeholder="you@envisionus.com"
-                />
-              </label>
-              <label className="story__field">
-                <span className="story__label">Your Story</span>
+                <span className="story__label">Story Description <span className="story__required">*</span></span>
                 <textarea
                   className="story__textarea"
-                  value={story}
-                  onChange={(e) => setStory(e.target.value)}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
                   required
                   rows={5}
-                  placeholder="Tell us about a milestone, patient impact moment, team achievement, or news worth sharing..."
+                  placeholder="Tell us about the moment, achievement, or milestone..."
                 />
               </label>
-              {error && <p className="story__error">{error}</p>}
-              <div className="story__form-actions">
-                <button type="submit" className="story__cta" disabled={submitting}>
-                  <Icon name="mail" />
-                  {submitting ? 'Submitting...' : 'Submit Your Story'}
-                </button>
-                <button type="button" className="story__cancel" onClick={() => setShowForm(false)}>
-                  Cancel
-                </button>
-              </div>
-            </form>
-          ) : (
-            <>
-              <button className="story__cta" onClick={() => setShowForm(true)}>
-                <Icon name="mail" />
-                {featuredContent.cta}
+
+              <label className="story__field">
+                <span className="story__label">Attachment <span className="story__optional">(optional)</span></span>
+                <input
+                  type="file"
+                  className="story__file-input"
+                  onChange={(e) => setAttachment(e.target.files?.[0] || null)}
+                />
+              </label>
+
+              {error && <p className="story__error"><Icon name="alert" /> {error}</p>}
+
+              <button type="submit" className="story__cta" disabled={submitting}>
+                {submitting ? 'Submitting...' : 'Submit Your Story'}
               </button>
-            </>
+            </form>
           )}
-        </div>
-        <div className="story__prompts">
-          {STORY_PROMPTS.map((prompt) => (
-            <div key={prompt.label} className="story__prompt">
-              <div className="story__prompt-icon">
-                <Icon name={prompt.icon} />
-              </div>
-              <div className="story__prompt-text">
-                <span className="story__prompt-label">{prompt.label}</span>
-                {prompt.text}
-              </div>
-            </div>
-          ))}
         </div>
       </div>
     </section>

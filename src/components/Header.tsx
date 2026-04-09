@@ -8,10 +8,10 @@ export function Header({ onContactClick }: { onContactClick?: () => void }) {
           <span className="header__tag">Internal</span>
         </div>
         <nav className="header__nav">
-          <a href="#brand-resources" className="header__link">Resources</a>
+          <a href="#brand-assets" className="header__link">Brand Assets</a>
+          <a href="#brand-identity" className="header__link">Guidelines</a>
           <a href="#templates" className="header__link">Templates</a>
-          <a href="#request-center" className="header__link">Requests</a>
-          <a href="#social-hub" className="header__link">Social</a>
+          <a href="#start-request" className="header__link">Requests</a>
           <button
             type="button"
             className="header__link header__link--btn"
