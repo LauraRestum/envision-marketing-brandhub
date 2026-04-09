@@ -13,20 +13,6 @@ const requestCards = [
     modalKey: 'design-request',
   },
   {
-    id: 'imagery',
-    title: 'Find Photos or Video',
-    description: 'Request specific imagery or video that isn\'t in the approved library.',
-    icon: 'image',
-    modalKey: 'asset-request',
-  },
-  {
-    id: 'messaging',
-    title: 'Write Messaging',
-    description: 'Request new copy, taglines, or messaging support from the marketing team.',
-    icon: 'message',
-    modalKey: 'design-request',
-  },
-  {
     id: 'web',
     title: 'Update Web or Content',
     description: 'Request a website update, new page, content change, or bug fix.',
@@ -41,9 +27,9 @@ const requestCards = [
     modalKey: 'campaign-planning',
   },
   {
-    id: 'custom',
-    title: 'Request Something Custom',
-    description: 'Can\'t find what you need? Submit a custom request to the marketing team.',
+    id: 'asset',
+    title: 'Request an Asset',
+    description: 'Request a specific asset or resource from the marketing team.',
     icon: 'download',
     modalKey: 'asset-request',
   },
