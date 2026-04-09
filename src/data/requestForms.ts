@@ -40,9 +40,8 @@ export const requestForms: RequestForm[] = [
     description: 'Reorder business cards, brochures, signage, or any previously approved printed material.',
     helperText: 'Let us know the material name and the quantity you need.',
     icon: 'printer',
-    actionType: 'modal',
-    modalKey: 'reprint-request',
-    embedUrl: 'https://forms.clickup.com/9010115835/f/8cgpx7v-19293/A6NNTH5EOKPY0I434C',
+    actionType: 'external',
+    href: 'https://www.envisionprintservices.com',
     keywords: ['reprint', 'print', 'order', 'reorder', 'copies', 'printing', 'print more'],
   },
   {
@@ -53,7 +52,7 @@ export const requestForms: RequestForm[] = [
     icon: 'download',
     actionType: 'modal',
     modalKey: 'asset-request',
-    embedUrl: 'https://forms.clickup.com/9010115835/f/8cgpx7v-94453/JK968N8IMKLFUBBTMI',
+    embedUrl: 'https://forms.clickup.com/9010115835/f/8cgpx7v-94473/4XU9UHCRWNRTIBMQ9D',
     keywords: ['asset', 'file', 'resource', 'download', 'need', 'find', 'looking for'],
   },
   {
@@ -74,7 +73,7 @@ export const requestForms: RequestForm[] = [
     icon: 'calendar',
     actionType: 'modal',
     modalKey: 'campaign-planning',
-    embedUrl: 'https://forms.clickup.com/9010115835/f/8cgpx7v-19293/A6NNTH5EOKPY0I434C',
+    embedUrl: 'https://forms.clickup.com/9010115835/f/8cgpx7v-94493/T6UOLOC4XBZPFPY4E9',
     keywords: ['campaign', 'event', 'launch', 'initiative', 'multi-channel', 'plan', 'planning', 'conference', 'promotion'],
   },
 ];
