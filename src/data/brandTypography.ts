@@ -27,7 +27,6 @@ export const brandFonts: BrandFont[] = [
     name: 'Gotham',
     category: 'Sans-serif',
     description: 'Gotham is the primary brand typeface for Envision. Use it for headings, titles, and high-visibility brand materials where a bold, confident presence is needed.',
-    downloadLabel: 'Contact marketing for Gotham font files',
   },
   {
     name: 'Montserrat',

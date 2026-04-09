@@ -17,6 +17,7 @@ import { StorySubmission } from '@/components/StorySubmission';
 import { ColorPalettePanel } from '@/components/ColorPalettePanel';
 import { TypographyPanel } from '@/components/TypographyPanel';
 import { imageryQuiz, videoQuiz, presentationQuiz } from '@/data/quizConfigs';
+import { imageryDestinations } from '@/data/imageryDestinations';
 import { useAction } from '@/hooks/useAction';
 import type { ActionType } from '@/data/types';
 
@@ -24,27 +25,36 @@ import type { ActionType } from '@/data/types';
 
 function ImageryResult({ answers }: { answers: Record<string, string> }) {
   const topic = answers['topic'];
-  const labels: Record<string, string> = {
-    rehabilitation: 'Rehabilitation & Vision Rehab',
-    education: 'Education & Child Development',
-    research: 'Research & Innovation',
-    community: 'Community & Events',
-    employment: 'Employment & Workplace',
-    products: 'Products & Manufacturing',
-    buildings: 'Buildings & Facilities',
+  const destinations: Record<string, { label: string; key: string }> = {
+    rehabilitation: { label: 'Rehabilitation & Vision Services', key: 'rehabilitation-vision-services' },
+    education: { label: 'Education & Workforce Development', key: 'education-workforce-development' },
+    research: { label: 'Research & Innovation', key: 'research-innovation' },
+    community: { label: 'Community Outreach & Engagement', key: 'community-outreach-engagement' },
+    employment: { label: 'Employment & Career Pathways', key: 'employment-career-pathways' },
+    products: { label: 'Products & Customer Services', key: 'products-customer-services' },
+    buildings: { label: 'Building Photos', key: 'building-photos' },
   };
+  const dest = destinations[topic];
+  const folder = dest ? imageryDestinations[dest.key] : null;
   return (
     <div className="quiz-result">
       <div className="quiz-result__header">
         <Icon name="image" />
-        <h3 className="quiz-result__title">{labels[topic] || 'Approved Imagery'}</h3>
+        <h3 className="quiz-result__title">{dest?.label || 'Approved Imagery'}</h3>
       </div>
       <p className="quiz-result__desc">
-        Approved imagery for this category is available in the shared library. Contact the marketing team if you need specific photos not found here.
+        Browse approved imagery for this category in the shared SharePoint library.
       </p>
-      <p className="quiz-result__note">
-        The approved imagery library is being integrated. For now, reach out to marketing@envisionus.com for image requests in this category.
-      </p>
+      {folder && (
+        <a
+          href={folder.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="quiz-result__action-btn"
+        >
+          <Icon name="arrow-right" /> Open {folder.title} folder
+        </a>
+      )}
     </div>
   );
 }
