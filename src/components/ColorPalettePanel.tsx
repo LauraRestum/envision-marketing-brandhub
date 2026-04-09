@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Icon } from './Icons';
-import { primaryColors, secondaryColors } from '@/data/brandColors';
+import { primaryColors, extendedColors } from '@/data/brandColors';
 import type { BrandColor } from '@/data/brandColors';
 
 function copyToClipboard(text: string) {
@@ -65,7 +65,7 @@ export function ColorPalettePanel({ onClose }: { onClose: () => void }) {
 
         <div className="brand-panel__body">
           <div className="color-section">
-            <h3 className="color-section__title">Primary colors</h3>
+            <h3 className="color-section__title">Primary Colors</h3>
             <div className="color-section__grid">
               {primaryColors.map((c) => (
                 <ColorSwatch key={c.hex} color={c} />
@@ -74,9 +74,9 @@ export function ColorPalettePanel({ onClose }: { onClose: () => void }) {
           </div>
 
           <div className="color-section">
-            <h3 className="color-section__title">Secondary colors</h3>
+            <h3 className="color-section__title">Extended Palette</h3>
             <div className="color-section__grid">
-              {secondaryColors.map((c) => (
+              {extendedColors.map((c) => (
                 <ColorSwatch key={c.hex} color={c} />
               ))}
             </div>

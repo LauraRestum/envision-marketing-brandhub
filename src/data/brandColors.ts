@@ -1,6 +1,6 @@
 // ============================================================
-// BRAND COLORS — Official Envision color palette with all
-// color values (HEX, RGB, CMYK, Pantone) for brand consistency.
+// BRAND COLORS — Official Envision color palette matching the
+// brand book. Primary Colors + Extended Palette.
 // ============================================================
 
 export interface BrandColor {
@@ -12,118 +12,92 @@ export interface BrandColor {
   usage: string;
 }
 
-export interface PillarColor {
-  pillar: string;
-  colorName: string;
-  hex: string;
-  usage: string;
-}
+// ── Primary Colors ──
 
 export const primaryColors: BrandColor[] = [
   {
-    name: 'Envision Navy',
-    hex: '#162B6B',
-    rgb: '22, 43, 107',
-    cmyk: '100, 85, 23, 14',
-    pantone: 'PMS 2758 C',
-    usage: 'Primary brand color. Use for headers, key UI elements, and brand-forward materials.',
+    name: 'Blue',
+    hex: '#003B97',
+    rgb: '0, 48, 155',
+    cmyk: '100, 81, 0, 23',
+    pantone: 'PMS 287C',
+    usage: 'Primary brand color. Use for headers, key visual elements, and brand-forward materials.',
   },
   {
-    name: 'Envision Green',
-    hex: '#5CB135',
-    rgb: '92, 177, 53',
-    cmyk: '62, 0, 100, 0',
-    pantone: 'PMS 362 C',
-    usage: 'Primary accent. CTAs, highlights, and action elements.',
-  },
-  {
-    name: 'Envision Cyan',
-    hex: '#1BAEE1',
-    rgb: '27, 174, 225',
-    cmyk: '73, 14, 3, 0',
-    pantone: 'PMS 299 C',
-    usage: 'Interactive elements, links, and secondary accents.',
+    name: 'Green',
+    hex: '#78BE21',
+    rgb: '120, 190, 33',
+    cmyk: '54, 0, 100, 0',
+    pantone: 'PMS 368C',
+    usage: 'Primary accent. CTAs, highlights, action elements, and growth-related materials.',
   },
 ];
 
-export const secondaryColors: BrandColor[] = [
+// ── Extended Palette ──
+
+export const extendedColors: BrandColor[] = [
   {
-    name: 'Envision Yellow',
-    hex: '#F5C242',
-    rgb: '245, 194, 66',
-    cmyk: '2, 22, 83, 0',
-    pantone: 'PMS 7405 C',
-    usage: 'Highlights, alerts, and warm accents. Use sparingly.',
+    name: 'Navy',
+    hex: '#002855',
+    rgb: '0, 40, 85',
+    cmyk: '100, 65, 19, 60',
+    pantone: 'PMS 296C',
+    usage: 'Deep anchoring color for backgrounds, headers, and formal materials.',
   },
   {
-    name: 'Envision Purple',
-    hex: '#8B3884',
-    rgb: '139, 56, 132',
-    cmyk: '39, 85, 4, 0',
-    pantone: 'PMS 2592 C',
-    usage: 'Research pillar and specialty accents.',
+    name: 'Bright Blue',
+    hex: '#41B6E6',
+    rgb: '65, 182, 230',
+    cmyk: '63, 3, 0, 0',
+    pantone: 'PMS 298C',
+    usage: 'Interactive elements, links, and secondary accents.',
   },
   {
-    name: 'Envision Forest',
-    hex: '#1A4332',
-    rgb: '26, 67, 50',
-    cmyk: '82, 30, 72, 55',
-    pantone: 'PMS 3435 C',
-    usage: 'Products pillar and grounding elements.',
+    name: 'Forest Green',
+    hex: '#004B1E',
+    rgb: '0, 75, 30',
+    cmyk: '100, 0, 100, 69',
+    pantone: 'PMS 357C',
+    usage: 'Grounding element for products and environmental materials.',
+  },
+  {
+    name: 'Goldenrod',
+    hex: '#FFB81C',
+    rgb: '255, 184, 28',
+    cmyk: '0, 25, 94, 0',
+    pantone: 'PMS 123C',
+    usage: 'Highlights, warm accents, and attention-drawing elements. Use sparingly.',
+  },
+  {
+    name: 'Terracotta',
+    hex: '#EA733D',
+    rgb: '234, 115, 61',
+    cmyk: '0, 64, 80, 1',
+    pantone: 'PMS 4010C',
+    usage: 'Warm accent for community, outreach, and energetic materials.',
+  },
+  {
+    name: 'Violet',
+    hex: '#8B4799',
+    rgb: '139, 71, 153',
+    cmyk: '51, 84, 0, 0',
+    pantone: 'PMS 258C',
+    usage: 'Research and specialty accents.',
   },
   {
     name: 'Charcoal',
-    hex: '#58595B',
-    rgb: '88, 89, 91',
-    cmyk: '54, 45, 43, 26',
-    pantone: 'PMS Cool Gray 10 C',
+    hex: '#55565A',
+    rgb: '85, 86, 90',
+    cmyk: '63, 52, 44, 33',
+    pantone: 'PMS Cool Gray 11C',
     usage: 'Body text and secondary text.',
   },
   {
-    name: 'Silver',
-    hex: '#D3D4CC',
-    rgb: '211, 212, 204',
-    cmyk: '16, 10, 16, 0',
-    pantone: 'PMS Cool Gray 3 C',
+    name: 'Gray',
+    hex: '#D0D5CE',
+    rgb: '208, 213, 206',
+    cmyk: '10, 7, 12, 0',
+    pantone: 'PMS Cool Gray 7C',
     usage: 'Borders, dividers, and subtle backgrounds.',
-  },
-];
-
-export const pillarColors: PillarColor[] = [
-  {
-    pillar: 'Rehabilitation & Vision Services',
-    colorName: 'Envision Cyan',
-    hex: '#1BAEE1',
-    usage: 'All rehab and vision services materials, EVRC content.',
-  },
-  {
-    pillar: 'Education & Workforce Development',
-    colorName: 'Envision Green',
-    hex: '#5CB135',
-    usage: 'ECDC, Level-Up, workforce programs.',
-  },
-  {
-    pillar: 'Research & Innovation',
-    colorName: 'Envision Purple',
-    hex: '#8B3884',
-    usage: 'ERI, research publications, scientific content.',
-  },
-  {
-    pillar: 'Community Outreach & Engagement',
-    colorName: 'Envision Yellow',
-    hex: '#D4A017',
-    usage: 'Community events, outreach, arts programming.',
-  },
-  {
-    pillar: 'Employment & Career Pathways',
-    colorName: 'Envision Navy',
-    hex: '#162B6B',
-    usage: 'BSC, workforce employment, career content.',
-  },
-  {
-    pillar: 'Products & Customer Services',
-    colorName: 'Envision Forest',
-    hex: '#1A4332',
-    usage: 'Commercial solutions, product-focused materials.',
   },
 ];
