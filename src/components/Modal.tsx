@@ -33,17 +33,18 @@ export function Modal({ modalKey, onClose }: ModalProps) {
     };
   }, [modalKey, handleEsc]);
 
-  // Load the ClickUp dynamic-height embed script when a modal opens
+  // Load (or reload) the ClickUp dynamic-height embed script each time a modal opens.
+  // The script must run after the iframe is in the DOM so it can bind to it.
   useEffect(() => {
     if (!modalKey) return;
     const SCRIPT_SRC = 'https://app-cdn.clickup.com/assets/js/forms-embed/v1.js';
-    // Avoid duplicating the script tag
-    if (!document.querySelector(`script[src="${SCRIPT_SRC}"]`)) {
-      const s = document.createElement('script');
-      s.src = SCRIPT_SRC;
-      s.async = true;
-      document.body.appendChild(s);
-    }
+    // Remove any existing instance so the script re-initializes for the new iframe
+    const existing = document.querySelector(`script[src="${SCRIPT_SRC}"]`);
+    if (existing) existing.remove();
+    const s = document.createElement('script');
+    s.src = SCRIPT_SRC;
+    s.async = true;
+    document.body.appendChild(s);
   }, [modalKey]);
 
   if (!modalKey) return null;
